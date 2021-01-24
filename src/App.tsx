@@ -1,56 +1,52 @@
 import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import { Route, Switch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import './App.css';
+import { SignIn, SignOut, PrivateRoute } from './features/common/auth/Auth';
+import { isSignedIn } from './features/common/auth/authSlice'
+import { AppBar, Toolbar, IconButton, Typography, Link } from '@material-ui/core';
+import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import { PowerSettingsNew } from '@material-ui/icons'
+import Home from './features/common/home/Home';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    title: {
+      flexGrow: 1,
+    },
+    logoutButton: {
+      color: "inherit",
+    }
+  }),
+);
 
 function App() {
+
+  const classes = useStyles();
+  const signedIn = useSelector(isSignedIn)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+              Spiele
+          </Typography>
+          {signedIn &&
+            <IconButton edge="end" className={classes.logoutButton} href="/signout">
+              <PowerSettingsNew/>
+            </IconButton>
+          }
+        </Toolbar>
+      </AppBar>
+      <Switch>
+        <Route path="/signin" component={SignIn}/>
+        <Route path="/signout" component={SignOut}/>
+        <PrivateRoute path="/" component={Home}/>
+      </Switch>
     </div>
   );
 }
