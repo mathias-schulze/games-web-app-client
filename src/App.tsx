@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import './App.css';
 import { SignIn, SignOut, PrivateRoute } from './features/common/auth/Auth';
 import { isSignedIn } from './features/common/auth/authSlice'
-import { AppBar, Toolbar, IconButton, Typography, Link } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { PowerSettingsNew } from '@material-ui/icons'
 import Home from './features/common/home/Home';
