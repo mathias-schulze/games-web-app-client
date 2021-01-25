@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Redirect, RouteProps, useLocation, useHistory } from 'react-router-dom';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import { signIn, signOut, isSignedIn, setSignRedirectUrl, getsignInRedirectUrl } from './authSlice'
+import { signIn, signOut, isSignedIn, setSignRedirectUrl, getSignInRedirectUrl } from './authSlice'
 import { firebaseAuth } from '../firebase/Firebase';
 
 // Configure FirebaseUI.
@@ -42,7 +42,7 @@ export function SignIn() {
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const signRedirectUrl = useSelector(getsignInRedirectUrl);
+  const signRedirectUrl = useSelector(getSignInRedirectUrl);
 
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {
