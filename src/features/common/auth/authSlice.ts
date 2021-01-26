@@ -7,12 +7,6 @@ export type Auth = {
   name: string | null,
 }
 
-type User = {
-  uid: string | null,
-  name: string | null,
-  verified: boolean,
-}
-
 interface AuthState {
   auth: Auth | null,
   signedIn: boolean,
@@ -32,10 +26,10 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     signIn: (state, action: PayloadAction<Auth>) => {
-      console.log("sign in " + state.auth?.name)
       state.auth = action.payload;
       state.signedIn = (state.auth !== null);
-      state.verified = isUserVerified(action.payload);
+
+      createUserIfNotExists(action.payload);
     },
     signOut: (state) => {
       state.auth = null;
@@ -44,24 +38,20 @@ export const authSlice = createSlice({
     setSignRedirectUrl: (state, action: PayloadAction<string>) => {
       state.signInRedirectUrl = action.payload;
     },
+    setVerified: (state, action: PayloadAction<boolean>) => {
+      state.verified = action.payload;
+    },
   },
 });
 
-export const { signIn, signOut, setSignRedirectUrl } = authSlice.actions;
+export const { signIn, signOut, setSignRedirectUrl, setVerified } = authSlice.actions;
 
 export const getAuth = (state: RootState) => state.auth.auth;
 export const isSignedIn = (state: RootState) => state.auth.signedIn;
+export const isVerified = (state: RootState) => state.auth.verified;
 export const getSignInRedirectUrl = (state: RootState) => state.auth.signInRedirectUrl;
 
-function isUserVerified(auth: Auth): boolean {
-
-  let user:User = getOrCreateUser(auth);
-  return user.verified;
-}
-
-function getOrCreateUser(auth: Auth) :User {
-
-  let user:User = { uid: null, name: null, verified: false };
+function createUserIfNotExists(auth: Auth) : void {
 
   const userId = auth.uid;
   if (userId) {
@@ -70,13 +60,10 @@ function getOrCreateUser(auth: Auth) :User {
       if (!doc.exists) {
         userDocRef.set({ name: auth.name, verified: false });
       }
-      user = { uid: userId, name: doc.data()?.name, verified: doc.data()?.verified }
     }).catch(function(error) {
       console.log("Error getting document:", error);
     });
   }
-
-  return user;
 }
 
 export default authSlice.reducer;
