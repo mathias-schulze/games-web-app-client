@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Redirect, RouteProps, useLocation, useHistory } from 'react-router-dom';
+import { Dialog, DialogTitle } from '@material-ui/core';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { signIn, signOut, isSignedIn, setSignRedirectUrl, getSignInRedirectUrl } from './authSlice'
 import { firebaseAuth } from '../firebase/Firebase';
@@ -56,9 +57,10 @@ export function SignIn() {
   });
 
   return (
-    <div>
+    <Dialog open={true}>
+      <DialogTitle>Anmeldung</DialogTitle>
       <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebaseAuth()} />
-    </div>
+    </Dialog>
   );
 }
 
