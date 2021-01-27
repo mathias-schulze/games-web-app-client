@@ -5,6 +5,7 @@ import { firestore, COLLECTION_USERS } from '../firebase/Firebase'
 export type Auth = {
   uid: string | null,
   name: string | null,
+  photoURL: string | null,
 }
 
 interface AuthState {

@@ -50,7 +50,11 @@ export function SignIn() {
   useEffect(() => {
     const unregisterAuthObserver = firebaseAuth().onAuthStateChanged(user => {
       if (user) {
-        dispatch(signIn({ uid: user.uid, name: user.displayName }))
+        dispatch(signIn({
+          uid: user.uid,
+          name: (user.displayName != null ? user.displayName : user.email),
+          photoURL: user.photoURL
+        }))
         history.push(signRedirectUrl);
       }
     });
