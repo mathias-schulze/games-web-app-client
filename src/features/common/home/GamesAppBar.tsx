@@ -6,6 +6,7 @@ import { PowerSettingsNew } from '@material-ui/icons'
 import { getAuth } from '../auth/authSlice'
 import { firestore, COLLECTION_USERS } from '../firebase/Firebase';
 import { setVerified } from '../auth/authSlice'
+import ServerConnection from '../api/ServerConnection'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,6 +49,7 @@ function GamesAppBar() {
             Spiele
         </Typography>
         <PlayerAvatar/>
+        <ServerConnection/>
         <IconButton edge="end" className={classes.logoutButton} href="/signout">
           <PowerSettingsNew fontSize="large"/>
         </IconButton>
