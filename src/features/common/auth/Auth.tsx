@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Route, Redirect, RouteProps, useLocation, useHistory } from 'react-router-dom';
 import { Dialog, DialogTitle } from '@material-ui/core';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import { signIn, signOut, isSignedIn, setSignRedirectUrl, getSignInRedirectUrl, getAuth, setVerified } from './authSlice'
-import { firebaseAuth, firestore, COLLECTION_USERS } from '../firebase/Firebase';
+import { signIn, signOut, isSignedIn, setSignRedirectUrl, getSignInRedirectUrl } from './authSlice'
+import { firebaseAuth } from '../firebase/Firebase';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -44,7 +44,6 @@ export function SignIn() {
   const dispatch = useDispatch();
   const history = useHistory();
   const signRedirectUrl = useSelector(getSignInRedirectUrl);
-  const auth = useSelector(getAuth);
 
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {
@@ -60,21 +59,6 @@ export function SignIn() {
     });
     return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
   });
-
-  useEffect(() => {
-    const userId = auth?.uid;
-    if (userId != null) {
-      const userDocRef = firestore.collection(COLLECTION_USERS).doc(userId);
-      userDocRef.get().then(function(doc) {
-        if (doc.exists) {
-          dispatch(setVerified(doc.data()?.verified))
-        }
-      }).catch(function(error) {
-        console.log("Error getting document:", error);
-      });
-    }
-  });
-
 
   return (
     <Dialog open={true}>

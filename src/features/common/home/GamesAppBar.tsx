@@ -1,9 +1,11 @@
-import React from 'react'
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { AppBar, Toolbar, IconButton, Typography, Avatar } from '@material-ui/core';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { PowerSettingsNew } from '@material-ui/icons'
 import { getAuth } from '../auth/authSlice'
+import { firestore, COLLECTION_USERS } from '../firebase/Firebase';
+import { setVerified } from '../auth/authSlice'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,7 +24,23 @@ const useStyles = makeStyles((theme: Theme) =>
 function GamesAppBar() {
 
   const classes = useStyles();
-  
+  const dispatch = useDispatch();
+  const auth = useSelector(getAuth);
+
+  useEffect(() => {
+    const userId = auth?.uid;
+    if (userId != null) {
+      const userDocRef = firestore.collection(COLLECTION_USERS).doc(userId);
+      userDocRef.get().then(function(doc) {
+        if (doc.exists) {
+          dispatch(setVerified(doc.data()?.verified))
+        }
+      }).catch(function(error) {
+        console.log("Error getting document:", error);
+      });
+    }
+  });
+
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
@@ -31,7 +49,7 @@ function GamesAppBar() {
         </Typography>
         <PlayerAvatar/>
         <IconButton edge="end" className={classes.logoutButton} href="/signout">
-            <PowerSettingsNew/>
+          <PowerSettingsNew fontSize="large"/>
         </IconButton>
       </Toolbar>
     </AppBar>
