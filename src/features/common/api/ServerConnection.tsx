@@ -32,7 +32,7 @@ const checkServerHealth = async () => {
       const status = response.data.status
       if (connected !== true && status === 'UP') {
         dispatch(setConnected(true))
-      } else if (connected === true) {
+      } else if (connected === true && status !== 'UP') {
         dispatch(setConnected(false))
       }
     })
