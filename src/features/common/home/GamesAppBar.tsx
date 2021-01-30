@@ -26,10 +26,9 @@ function GamesAppBar() {
 
   const classes = useStyles();
   const dispatch = useDispatch();
-  const auth = useSelector(getAuth);
+  const userId = useSelector(getAuth)?.uid;
 
   useEffect(() => {
-    const userId = auth?.uid;
     if (userId != null) {
       const userDocRef = firestore.collection(COLLECTION_USERS).doc(userId);
       userDocRef.get().then(function(doc) {
@@ -40,7 +39,7 @@ function GamesAppBar() {
         console.log("Error getting document:", error);
       });
     }
-  });
+  }, [dispatch, userId]);
 
   return (
     <AppBar position="static" className={classes.root}>

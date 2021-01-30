@@ -58,7 +58,7 @@ export function SignIn() {
       }
     });
     return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
-  });
+  }, [dispatch, history, signRedirectUrl]);
 
   return (
     <Dialog open={true}>
@@ -75,7 +75,7 @@ export function SignOut() {
   useEffect(() => {
     firebaseAuth().signOut();
     dispatch(signOut());
-  });
+  }, [dispatch]);
 
   return (
     <Redirect to="/"/>
