@@ -15,3 +15,4 @@ export const firebaseAuth = firebase.auth;
 export const firestore = firebase.firestore();
 
 export const COLLECTION_USERS = 'users';
+export const COLLECTION_GAMES = 'games';

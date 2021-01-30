@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux';
 import { isVerified } from '../auth/authSlice';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@material-ui/core';
-import GamesAppBar from './GamesAppBar'
+import { NewGame } from './NewGame'
 
 function Home() {
   
@@ -10,11 +10,10 @@ function Home() {
 
   return (
     <div>
-      <GamesAppBar/>
+      <NewGame/>
       {!verified &&
         <NotVerifiedDialog/>
       }
-      Home
     </div>
   )
 }

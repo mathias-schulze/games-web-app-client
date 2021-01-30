@@ -6,5 +6,16 @@ service cloud.firestore {
     	allow read: if request.auth != null && request.auth.uid == user;
       allow create: if request.auth != null && request.resource.data.verified == false;
     }
+    match /games/{document=**} {
+      // verified user can read all data and create new entry
+    	allow read: if isVerified();
+      allow create: if isVerified()
+      	&& request.resource.data.stage == 'NEW';
+    }
+    
+    function isVerified() {
+	    return request.auth != null
+      	&& (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.verified == true);
+    }
   }
 }

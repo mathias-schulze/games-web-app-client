@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppBar, Toolbar, IconButton, Typography, Avatar } from '@material-ui/core';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { PowerSettingsNew } from '@material-ui/icons'
-import { getAuth } from '../auth/authSlice'
+import { getAuth, isSignedIn } from '../auth/authSlice'
 import { firestore, COLLECTION_USERS } from '../firebase/Firebase';
 import { setVerified } from '../auth/authSlice'
 import ServerConnection from '../api/ServerConnection'
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 function GamesAppBar() {
 
   const classes = useStyles();
+  const signedIn = useSelector(isSignedIn);
   const dispatch = useDispatch();
   const userId = useSelector(getAuth)?.uid;
 
@@ -42,18 +43,22 @@ function GamesAppBar() {
   }, [dispatch, userId]);
 
   return (
-    <AppBar position="static" className={classes.root}>
-      <Toolbar>
-        <Typography variant="h6" className={classes.title}>
-            Spiele
-        </Typography>
-        <PlayerAvatar/>
-        <ServerConnection/>
-        <IconButton edge="end" className={classes.logoutButton} href="/signout">
-          <PowerSettingsNew fontSize="large"/>
-        </IconButton>
-      </Toolbar>
-    </AppBar>
+    <div>
+      {signedIn &&
+        <AppBar position="static" className={classes.root}>
+          <Toolbar>
+            <Typography variant="h6" className={classes.title}>
+                Spiele
+            </Typography>
+            <PlayerAvatar/>
+            <ServerConnection/>
+            <IconButton edge="end" className={classes.logoutButton} href="/signout">
+              <PowerSettingsNew fontSize="large"/>
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+      }
+    </div>
   )
 }
 
