@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { IconButton } from '@material-ui/core'
+import { Badge, IconButton } from '@material-ui/core'
 import { Storage } from '@material-ui/icons'
 import api, { HEALTH_ENDPOINT } from './api'
 import { isConnected, setConnected } from './apiSlice'
@@ -17,7 +17,9 @@ function ServerConnection() {
 
   return (
     <IconButton edge="end">
-      <Storage fontSize="large" color={connected ? "action" : "error"}/>
+      <Badge variant="dot" overlap="circle" color={connected ? "default" : "error"}>
+        <Storage fontSize="large"/>
+      </Badge>
     </IconButton>
   )
 }
