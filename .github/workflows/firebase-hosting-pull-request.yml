@@ -2,7 +2,7 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on PR
-'on': pull_request
+"on": pull_request
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
@@ -10,15 +10,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Checkout private resources
         uses: actions/checkout@v2
-          with:
-            repository: mathias-schulze/games-web-app-resources
-            token: ${{ secrets.GitHub_PAT }}
-            path: public/extern
+        with:
+          repository: mathias-schulze/games-web-app-resources
+          token: ${{ secrets.SRC_REPO_ACCESS_TOKEN }}
+          path: public/extern
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MSZ_GAMES }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_MSZ_GAMES }}"
           projectId: msz-games
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
