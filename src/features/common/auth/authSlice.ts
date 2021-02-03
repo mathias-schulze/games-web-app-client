@@ -6,6 +6,7 @@ export type Auth = {
   uid: string | null,
   name: string | null,
   photoURL: string | null,
+  token: string | null,
 }
 
 interface AuthState {
@@ -42,10 +43,15 @@ export const authSlice = createSlice({
     setVerified: (state, action: PayloadAction<boolean>) => {
       state.verified = action.payload;
     },
+    updateIdToken: (state, action: PayloadAction<string>) => {
+      if (state.auth) {
+        state.auth.token = action.payload;
+      }
+    },
   },
 });
 
-export const { signIn, signOut, setSignRedirectUrl, setVerified } = authSlice.actions;
+export const { signIn, signOut, setSignRedirectUrl, setVerified, updateIdToken } = authSlice.actions;
 
 export const getAuth = (state: RootState) => state.auth.auth;
 export const isSignedIn = (state: RootState) => state.auth.signedIn;

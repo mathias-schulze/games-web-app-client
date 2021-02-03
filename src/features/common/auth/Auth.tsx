@@ -47,16 +47,21 @@ export function SignIn() {
 
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {
+    
     const unregisterAuthObserver = firebaseAuth().onAuthStateChanged(user => {
       if (user) {
-        dispatch(signIn({
-          uid: user.uid,
-          name: (user.displayName != null ? user.displayName : user.email),
-          photoURL: user.photoURL
-        }))
-        history.push(signRedirectUrl);
+        user.getIdToken(true).then(idToken => {
+          dispatch(signIn({
+            uid: user.uid,
+            name: (user.displayName != null ? user.displayName : user.email),
+            photoURL: user.photoURL,
+            token: idToken,
+          }))
+          history.push(signRedirectUrl);
+        })
       }
     });
+
     return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
   }, [dispatch, history, signRedirectUrl]);
 

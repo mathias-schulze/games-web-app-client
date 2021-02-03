@@ -4,9 +4,10 @@ import { AppBar, Toolbar, IconButton, Typography, Avatar } from '@material-ui/co
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { PowerSettingsNew } from '@material-ui/icons'
 import { getAuth, isSignedIn } from '../auth/authSlice'
-import { firestore, COLLECTION_USERS } from '../firebase/Firebase';
-import { setVerified } from '../auth/authSlice'
+import { firestore, firebaseAuth, COLLECTION_USERS } from '../firebase/Firebase';
+import { setVerified, updateIdToken } from '../auth/authSlice'
 import ServerConnection from '../api/ServerConnection'
+import { store } from '../store/store'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -66,6 +67,11 @@ function PlayerAvatar() {
   
   const auth = useSelector(getAuth);
 
+  useEffect(() => {
+    const startRefreshIdToken = setInterval(() => refreshIdToken(), 1800000);
+    return () => clearInterval(startRefreshIdToken);
+  }, [])
+
   let initial = "?";
   let photoURL = null;
 
@@ -82,6 +88,18 @@ function PlayerAvatar() {
       {photoURL != null && <Avatar src={photoURL}></Avatar>}
     </div>
   )
+}
+
+const refreshIdToken = async () => {
+  
+  const dispatch = store.dispatch;
+
+  firebaseAuth().currentUser?.getIdToken(true).then(idToken => {
+    const auth = store.getState().auth.auth;
+    if (auth) {
+      dispatch(updateIdToken(idToken));
+    }
+  })
 }
 
 export default GamesAppBar
