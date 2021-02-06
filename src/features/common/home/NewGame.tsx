@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Fab, makeStyles } from '@material-ui/core';
 import { Add } from '@material-ui/icons'
 import { firestore, COLLECTION_GAMES } from '../firebase/Firebase'
-import { games, Game, Stage } from '../Const'
+import { Stage } from '../Const'
+import { Game } from '../game/GameTypes'
+import api, { GAMES_LIST_ENDPOINT } from '../api/api'
 
 const useStyles = makeStyles(theme => ({
   newGameButton: {
@@ -20,6 +22,7 @@ export function NewGame() {
   
   const classes = useStyles();
   const [newGameDialogVisible, setNewGameDialogVisible] = useState(false);
+  const [games, setGames] = useState<Game[]>([]);
   const history = useHistory();
 
   function createNewGame(game: Game) {
@@ -35,6 +38,10 @@ export function NewGame() {
       console.log("Error adding document:", error);
     });    
   }
+
+  useEffect(() => {
+    getGames().then(gameList => setGames(gameList));
+  }, [])
 
   return (
     <div>
@@ -61,6 +68,23 @@ export function NewGame() {
       </Fab>
     </div>
   )
+}
+
+type GameAsync = Promise<Game[]>;
+const GameAsync = Promise;
+
+const getGames = async ():GameAsync => {
+
+  let games:Game[] = new Array(0);
+  try {
+    await api.get<Game[]>(GAMES_LIST_ENDPOINT).then((response: { data: Game[]; }) => {
+      games = response.data;
+    })
+  } catch (error) {
+    console.error(error);
+  }
+
+  return games;
 }
 
 export default NewGame
