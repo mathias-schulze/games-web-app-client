@@ -11,6 +11,7 @@ function ServerConnection() {
   const connected = useSelector(isConnected);
 
   useEffect(() => {
+    checkServerHealth();
     const startHealthCheck = setInterval(() => checkServerHealth(), 10000);
     return () => clearInterval(startHealthCheck);
   }, []);
