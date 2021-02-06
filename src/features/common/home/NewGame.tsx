@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Fab, makeStyles } from '@material-ui/core';
 import { Add } from '@material-ui/icons'
-import { firestore, COLLECTION_GAMES } from '../firebase/Firebase'
-import { Stage } from '../Const'
 import { Game } from '../game/GameTypes'
-import api, { GAMES_LIST_ENDPOINT } from '../api/api'
+import api, { GAMES_ENDPOINT, GAMES_LIST_ENDPOINT } from '../api/api'
 
 const useStyles = makeStyles(theme => ({
   newGameButton: {
@@ -26,17 +24,11 @@ export function NewGame() {
   const history = useHistory();
 
   function createNewGame(game: Game) {
+    const gameId = createNewGameServer(game).then(gameId => {return gameId});
     setNewGameDialogVisible(false)
-
-    firestore.collection(COLLECTION_GAMES).add({
-      game: game.id,
-      stage: Stage[Stage.NEW],
-    }).then(function(docRef) {
-      const gameId = docRef.id;
-      history.push("/game/" + gameId);
-    }).catch(function(error) {
-      console.log("Error adding document:", error);
-    });    
+    gameId.then(id => {
+      history.push("/game/" + id);
+    })
   }
 
   useEffect(() => {
@@ -73,15 +65,29 @@ export function NewGame() {
 const getGames = async ():Promise<Game[]> => {
 
   let games:Game[] = new Array(0);
-  try {
-    await api.get<Game[]>(GAMES_LIST_ENDPOINT).then((response: { data: Game[]; }) => {
-      games = response.data;
-    })
-  } catch (error) {
+  await api.get<Game[]>(GAMES_LIST_ENDPOINT).then((response: { data: Game[]; }) => {
+    games = response.data;
+  }).catch(error => {
     console.error(error);
-  }
+  })
 
   return games;
+}
+
+interface CreateNewGameResponse {
+  gameId: string,
+}
+
+const createNewGameServer = async (game: Game):Promise<CreateNewGameResponse|null> => {
+
+  let gameId = null;
+  await api.post(GAMES_ENDPOINT, {game: game.id}).then((response: { data: CreateNewGameResponse }) => {
+    gameId = response.data.gameId;
+  }).catch(error => {
+    console.error(error);
+  });
+
+  return gameId;
 }
 
 export default NewGame

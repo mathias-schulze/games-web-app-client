@@ -9,8 +9,7 @@ service cloud.firestore {
     match /games/{document=**} {
       // verified user can read all data and create new entry
     	allow read: if isVerified();
-      allow create: if isVerified()
-      	&& request.resource.data.stage == 'NEW';
+      allow write: if false;
     }
     
     function isVerified() {
