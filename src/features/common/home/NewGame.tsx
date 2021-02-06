@@ -70,10 +70,7 @@ export function NewGame() {
   )
 }
 
-type GameAsync = Promise<Game[]>;
-const GameAsync = Promise;
-
-const getGames = async ():GameAsync => {
+const getGames = async ():Promise<Game[]> => {
 
   let games:Game[] = new Array(0);
   try {
