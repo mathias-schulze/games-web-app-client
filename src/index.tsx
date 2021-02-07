@@ -6,13 +6,16 @@ import { store } from './features/common/store/store';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
+import { SnackbarProvider } from 'notistack';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router>
-        <App />
-      </Router>
+      <SnackbarProvider>
+        <Router>
+          <App />
+        </Router>
+      </SnackbarProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

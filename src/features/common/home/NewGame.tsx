@@ -67,9 +67,7 @@ const getGames = async ():Promise<Game[]> => {
   let games:Game[] = new Array(0);
   await api.get<Game[]>(GAMES_LIST_ENDPOINT).then((response: { data: Game[]; }) => {
     games = response.data;
-  }).catch(error => {
-    console.error(error);
-  })
+  }).catch();
 
   return games;
 }
@@ -83,9 +81,7 @@ const createNewGameServer = async (game: Game):Promise<CreateNewGameResponse|nul
   let gameId = null;
   await api.post(GAMES_ENDPOINT, {game: game.id}).then((response: { data: CreateNewGameResponse }) => {
     gameId = response.data.gameId;
-  }).catch(error => {
-    console.error(error);
-  });
+  }).catch();
 
   return gameId;
 }

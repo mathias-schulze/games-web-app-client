@@ -5,12 +5,14 @@ import { SignIn, SignOut, PrivateRoute } from './features/common/auth/Auth';
 import GamesAppBar from './features/common/home/GamesAppBar'
 import Home from './features/common/home/Home';
 import Game from './features/common/game/Game';
+import Notifier from './features/common/home/Notifier';
 
 function App() {
 
   return (
     <div>
       <GamesAppBar/>
+      <Notifier/>
       <Switch>
         <Route path="/signin" component={SignIn}/>
         <Route path="/signout" component={SignOut}/>
