@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export function NewGame() {
+export function AddNewGameDialog() {
   
   const classes = useStyles();
   const [newGameDialogVisible, setNewGameDialogVisible] = useState(false);
@@ -86,4 +86,4 @@ const createNewGameServer = async (game: Game):Promise<CreateNewGameResponse|nul
   return gameId;
 }
 
-export default NewGame
+export default AddNewGameDialog

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { isConnected } from '../api/apiSlice';
 import { isVerified } from '../auth/authSlice';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@material-ui/core';
-import { NewGame } from './NewGame'
+import { AddNewGameDialog } from './AddNewGameDialog'
 
 function Home() {
   
@@ -13,7 +13,7 @@ function Home() {
   return (
     <div>
       {connected &&
-        <NewGame/>
+        <AddNewGameDialog/>
       }
       {!verified &&
         <NotVerifiedDialog/>
