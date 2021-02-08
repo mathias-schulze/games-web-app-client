@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { AppBar, Toolbar, IconButton, Typography, Avatar } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Avatar, Link } from '@material-ui/core';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { PowerSettingsNew } from '@material-ui/icons'
 import { getAuth, isSignedIn } from '../auth/authSlice'
@@ -48,9 +48,10 @@ function GamesAppBar() {
       {signedIn &&
         <AppBar position="static" className={classes.root}>
           <Toolbar>
-            <Typography variant="h6" className={classes.title}>
-                Spiele
-            </Typography>
+            <Link href="/" variant="h6" color="inherit" underline="none" 
+                onClick={(e: React.SyntheticEvent) => e.preventDefault()} className={classes.title}>
+              Spiele
+            </Link>
             <PlayerAvatar/>
             <ServerConnection/>
             <IconButton edge="end" className={classes.logoutButton} href="/signout">
