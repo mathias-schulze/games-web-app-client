@@ -1,16 +1,20 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
+import { isConnected } from '../api/apiSlice';
 import { isVerified } from '../auth/authSlice';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@material-ui/core';
 import { NewGame } from './NewGame'
 
 function Home() {
   
+  const connected = useSelector(isConnected)
   const verified = useSelector(isVerified)
 
   return (
     <div>
-      <NewGame/>
+      {connected &&
+        <NewGame/>
+      }
       {!verified &&
         <NotVerifiedDialog/>
       }
