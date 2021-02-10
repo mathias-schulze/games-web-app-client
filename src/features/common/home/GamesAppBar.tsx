@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppBar, Toolbar, IconButton, Avatar, Link } from '@material-ui/core';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
@@ -29,6 +30,7 @@ function GamesAppBar() {
   const signedIn = useSelector(isSignedIn);
   const dispatch = useDispatch();
   const userId = useSelector(getAuth)?.uid;
+  const history = useHistory();
 
   useEffect(() => {
     if (userId != null) {
@@ -49,7 +51,11 @@ function GamesAppBar() {
         <AppBar position="static" className={classes.root}>
           <Toolbar>
             <Link href="/" variant="h6" color="inherit" underline="none" 
-                onClick={(e: React.SyntheticEvent) => e.preventDefault()} className={classes.title}>
+                onClick={(e: React.SyntheticEvent) => {
+                  e.preventDefault();
+                  history.push("/");
+                }}
+                className={classes.title}>
               Spiele
             </Link>
             <PlayerAvatar/>
