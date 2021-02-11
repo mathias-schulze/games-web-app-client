@@ -5,6 +5,7 @@ import { addNotification, NotificationType } from '../home/appSlice'
 export const HEALTH_ENDPOINT = `actuator/health`;
 export const GAMES_ENDPOINT = `games`;
 export const GAMES_LIST_ENDPOINT = GAMES_ENDPOINT + `/list`;
+export const GAMES_ACTIVE_ENDPOINT = GAMES_ENDPOINT + `/active`;
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,

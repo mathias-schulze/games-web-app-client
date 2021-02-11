@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useSelector } from 'react-redux';
 import { isConnected } from '../api/apiSlice';
 import { isVerified } from '../auth/authSlice';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@material-ui/core';
 import { AddNewGameDialog } from './AddNewGameDialog'
+import GameList from './GameList';
 
 function Home() {
   
@@ -13,7 +14,10 @@ function Home() {
   return (
     <div>
       {connected &&
-        <AddNewGameDialog/>
+        <Fragment>
+          <GameList/>
+          <AddNewGameDialog/>
+        </Fragment>
       }
       {!verified &&
         <NotVerifiedDialog/>
