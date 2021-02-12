@@ -67,6 +67,11 @@ function GameList() {
                 </TableCell>
               </TableRow>
             ))}
+            {activeGames.length === 0 &&
+              <TableRow key="noActiveGame">
+                <TableCell colSpan={3} align="center">Keine aktiven Spiele</TableCell>
+              </TableRow>
+            }
           </TableBody>
         </Table>
       </TableContainer>
