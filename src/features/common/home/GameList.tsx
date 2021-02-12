@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles } from '@material-ui/core'
 import { PlayArrow, Refresh } from '@material-ui/icons'
 import moment from 'moment'
@@ -25,7 +25,6 @@ function GameList() {
   const connected = useSelector(isConnected);
   const [activeGames, setActiveGames] = useState<ActiveGame[]>([]);
   const history = useHistory();
-  const location = useLocation();
 
   useEffect(() => {
     if (connected) {
