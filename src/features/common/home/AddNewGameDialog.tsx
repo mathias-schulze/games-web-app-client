@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
   newGameButton: {
     position: 'fixed',
     bottom: theme.spacing(5),
-    right: theme.spacing(5),
+    right: theme.spacing(28),
   },
   newGameButtonIcon: {
     marginRight: theme.spacing(1),

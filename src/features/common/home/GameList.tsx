@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom';
-import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box } from '@material-ui/core'
-import { PlayArrow } from '@material-ui/icons'
+import { useHistory, useLocation } from 'react-router-dom';
+import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles } from '@material-ui/core'
+import { PlayArrow, Refresh } from '@material-ui/icons'
 import moment from 'moment'
 import api, { GAMES_ACTIVE_ENDPOINT } from '../api/api'
 import { isConnected } from '../api/apiSlice'
 import { ActiveGame } from '../game/GameTypes'
 
+const useStyles = makeStyles(theme => ({
+  refreshButton: {
+    position: 'fixed',
+    bottom: theme.spacing(5),
+    right: theme.spacing(5),
+  },
+  refreshButtonIcon: {
+    marginRight: theme.spacing(1),
+  },
+}));
+
 function GameList() {
   
+  const classes = useStyles();
   const connected = useSelector(isConnected);
   const [activeGames, setActiveGames] = useState<ActiveGame[]>([]);
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     if (connected) {
-      api.get<ActiveGame[]>(GAMES_ACTIVE_ENDPOINT).then((response: { data: ActiveGame[]; }) => {
-        setActiveGames(response.data)
-      }).catch(error => {});
+      refreshGameList();
     }
   }, [connected]);
+  
+  const refreshGameList = () => {
+    api.get<ActiveGame[]>(GAMES_ACTIVE_ENDPOINT).then((response: { data: ActiveGame[]; }) => {
+      setActiveGames(response.data)
+    }).catch(error => {});
+  }
 
   return (
     <div>
@@ -53,6 +70,10 @@ function GameList() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Fab variant="extended" color="primary" className={classes.refreshButton} onClick={() => refreshGameList()}>
+        <Refresh className={classes.refreshButtonIcon}/>
+        Aktualisieren
+      </Fab>
     </div>
   )
 }
