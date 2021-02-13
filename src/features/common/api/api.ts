@@ -2,10 +2,13 @@ import axios from 'axios'
 import { store } from '../store/store'
 import { addNotification, NotificationType } from '../home/appSlice'
 
-export const HEALTH_ENDPOINT = `actuator/health`;
-export const GAMES_ENDPOINT = `games`;
-export const GAMES_LIST_ENDPOINT = GAMES_ENDPOINT + `/list`;
-export const GAMES_ACTIVE_ENDPOINT = GAMES_ENDPOINT + `/active`;
+export const HEALTH_ENDPOINT = 'actuator/health';
+export const GAMES_ENDPOINT = 'games';
+export const GAMES_LIST_ENDPOINT = GAMES_ENDPOINT + '/list';
+export const GAMES_PARAM_ENDPOINT = GAMES_ENDPOINT + '/parameter';
+export const GAMES_ACTIVE_ENDPOINT = GAMES_ENDPOINT + '/active';
+export const GAMES_JOIN_ENDPOINT = '/join';
+export const PLAYERS_ENDPOINT = 'players';
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,

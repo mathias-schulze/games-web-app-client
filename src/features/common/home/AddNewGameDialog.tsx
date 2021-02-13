@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Fab, makeStyles } from '@material-ui/core';
 import { Add } from '@material-ui/icons'
-import { Game } from '../game/GameTypes'
+import { GameParameter } from '../game/GameTypes'
 import api, { GAMES_ENDPOINT, GAMES_LIST_ENDPOINT } from '../api/api'
 
 const useStyles = makeStyles(theme => ({
@@ -20,10 +20,10 @@ export function AddNewGameDialog() {
   
   const classes = useStyles();
   const [newGameDialogVisible, setNewGameDialogVisible] = useState(false);
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<GameParameter[]>([]);
   const history = useHistory();
 
-  function createNewGame(game: Game) {
+  function createNewGame(game: GameParameter) {
     const gameId = createNewGameServer(game).then(gameId => {return gameId});
     setNewGameDialogVisible(false)
     gameId.then(id => {
@@ -62,10 +62,10 @@ export function AddNewGameDialog() {
   )
 }
 
-const getGames = async ():Promise<Game[]> => {
+const getGames = async ():Promise<GameParameter[]> => {
 
-  let games:Game[] = new Array(0);
-  await api.get<Game[]>(GAMES_LIST_ENDPOINT).then((response: { data: Game[]; }) => {
+  let games:GameParameter[] = new Array(0);
+  await api.get<GameParameter[]>(GAMES_LIST_ENDPOINT).then((response: { data: GameParameter[]; }) => {
     games = response.data;
   }).catch(error => {});
 
@@ -76,7 +76,7 @@ interface CreateNewGameResponse {
   gameId: string,
 }
 
-const createNewGameServer = async (game: Game):Promise<CreateNewGameResponse|null> => {
+const createNewGameServer = async (game: GameParameter):Promise<CreateNewGameResponse|null> => {
 
   let gameId = null;
   await api.post(GAMES_ENDPOINT, {game: game.id}).then((response: { data: CreateNewGameResponse }) => {

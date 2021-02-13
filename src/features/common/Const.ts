@@ -1,6 +1,5 @@
 export enum Stage {
-  NEW,
-  PREPARE,
-  RUNNING,
-  FINISHED,
+  NEW = 'NEW',
+  RUNNING = 'RUNNING',
+  FINISHED = 'FINISHED',
 }
