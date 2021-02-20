@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, 
   Paper, TableContainer, Table, TableBody, TableCell, TableRow } from '@material-ui/core';
 import { GameParameter, ActiveGame, Player } from '../game/GameTypes'
-import api, { GAMES_ENDPOINT, GAMES_PARAM_ENDPOINT, GAMES_JOIN_ENDPOINT, PLAYERS_ENDPOINT } from '../api/api';
+import api, { GAMES_ENDPOINT, GAMES_PARAM_ENDPOINT, GAMES_JOIN_ENDPOINT, GAMES_START_ENDPOINT, PLAYERS_ENDPOINT } from '../api/api';
 import { firestore, COLLECTION_GAMES } from '../firebase/Firebase';
 import { getAuth } from '../auth/authSlice'
 import firebase from 'firebase';
@@ -67,6 +67,15 @@ function StartGameDialog(props: StartGameProps) {
     setJoinButtonDisabled(true);
   }
 
+  const startGame = async () => {
+
+    await api.post(GAMES_ENDPOINT + '/' + props.id + GAMES_START_ENDPOINT)
+        .then()
+        .catch(error => {});
+
+    setStartButtonDisabled(true);
+  }
+
   return (
     <Dialog open={true} maxWidth="lg">
       <DialogTitle>{gameParams?.name + " (#" + game?.no + ")"}</DialogTitle>
@@ -88,7 +97,7 @@ function StartGameDialog(props: StartGameProps) {
             Beitreten
           </Button>
           <Button disabled={startButtonDisabled} variant="contained" color="primary"
-              onClick={() => {}}>
+              onClick={() => {startGame()}}>
             Starten
           </Button>
         </DialogActions>

@@ -8,6 +8,7 @@ export const GAMES_LIST_ENDPOINT = GAMES_ENDPOINT + '/list';
 export const GAMES_PARAM_ENDPOINT = GAMES_ENDPOINT + '/parameter';
 export const GAMES_ACTIVE_ENDPOINT = GAMES_ENDPOINT + '/active';
 export const GAMES_JOIN_ENDPOINT = '/join';
+export const GAMES_START_ENDPOINT = '/start';
 export const PLAYERS_ENDPOINT = 'players';
 
 const instance = axios.create({
