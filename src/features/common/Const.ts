@@ -3,3 +3,7 @@ export enum Stage {
   RUNNING = 'RUNNING',
   FINISHED = 'FINISHED',
 }
+
+export enum GameType {
+  HERO_REALMS = 'HERO_REALMS',
+}

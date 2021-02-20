@@ -16,3 +16,4 @@ export const firestore = firebase.firestore();
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_GAMES = 'games';
+export const COLLECTION_TABLE = 'table_views';
