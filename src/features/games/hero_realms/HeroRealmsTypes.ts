@@ -1,6 +1,7 @@
 export interface HeroRealmsTableView {
   players: Player[];
   cardBack: string;
+  emptyDeck: string;
   fireGemsDeck: Deck;
   market: Card[];
   marketDeck: Deck;

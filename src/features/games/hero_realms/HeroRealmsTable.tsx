@@ -25,6 +25,10 @@ const useStyles = makeStyles(theme => ({
     right: "30px",
     top: "30px",
   },
+  area: {
+    border: '1px solid',
+    borderColor: theme.palette.primary.light,
+  },
 }));
 
 function HeroRealmsTable(props: HeroRealmsTableProps) {
@@ -42,19 +46,23 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
     }
   }, [userTableView])
 
+  const marketDeckSize = (table?.marketDeck) ? table.marketDeck.size : 0;
+  const ownDeckSize = (table?.ownPlayerArea.deck) ? table.ownPlayerArea.deck.size : 0;
+  const ownDiscardSize = (table?.ownPlayerArea.discardPile) ? table.ownPlayerArea.discardPile.size : 0;
+
   return (
     <div>
       <Grid container className={classes.root}>
         <Grid item container xs={12}>
           {table?.otherPlayerAreas.map(area => {
             return (
-              <Grid item container xs>
-                
+              <Grid item container xs className={classes.area}>
+                {area.playerName}
               </Grid>
             )})
           }
         </Grid>
-        <Grid item container xs={12} wrap="nowrap">
+        <Grid item container xs={12} wrap="nowrap" className={classes.area}>
           <Grid item xs>
             <Button onClick={() => {}} key="fireGemDeckButton">
               <img src={"..//"+table?.fireGemsDeck.cards[0].image} alt="fire_gem" className={classes.image}/>
@@ -75,12 +83,38 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
 
           <Grid item>
             <Button onClick={() => {}} key="marketDeckButton" disabled>
-              <Avatar className={classes.avatar}>{table?.marketDeck.size}</Avatar>
-              <img src={"..//"+table?.cardBack} alt="card_back" className={classes.image}/>
+              <Avatar className={classes.avatar}>{marketDeckSize}</Avatar>
+              <img src={"..//"+((marketDeckSize > 0) ? table?.cardBack : table?.emptyDeck)} alt="market deck" className={classes.image}/>
             </Button>
           </Grid>
         </Grid>
-        <Grid item container xs={12}>
+        <Grid item container xs={12} className={classes.area}>
+
+          {table?.ownPlayerArea.hand.map(handCard => {
+            return (
+              <Grid item xs>
+                <Button onClick={() => {}} key={"handButton"+table?.ownPlayerArea.hand.indexOf(handCard)}>
+                  <img src={"..//"+handCard.image} alt={handCard.name} 
+                    key={"HandCard"+table?.ownPlayerArea.hand.indexOf(handCard)} 
+                    className={classes.image}/>
+                </Button>
+              </Grid>
+            )})
+          }
+
+          <Grid item xs>
+            <Button onClick={() => {}} key="deckButton" disabled>
+              <Avatar className={classes.avatar}>{ownDeckSize}</Avatar>
+              <img src={"..//"+((ownDeckSize > 0) ? table?.cardBack : table?.emptyDeck)} alt="deck" className={classes.image}/>
+            </Button>
+          </Grid>
+
+          <Grid item>
+            <Button onClick={() => {}} key="discardPileButton" disabled>
+              <Avatar className={classes.avatar}>{ownDiscardSize}</Avatar>
+              <img src={"..//"+((ownDiscardSize > 0) ? table?.cardBack : table?.emptyDeck)} alt="discard pile" className={classes.image}/>
+            </Button>
+          </Grid>
           
         </Grid>
       </Grid>
