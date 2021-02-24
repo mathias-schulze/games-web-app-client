@@ -1,5 +1,6 @@
 export interface HeroRealmsTableView {
   players: Player[];
+  activePlayer: Player;
   cardBack: string;
   emptyDeck: string;
   fireGemsDeck: Deck;
@@ -32,6 +33,7 @@ export interface Card {
 export interface PlayerArea {
   playerId: string;
   playerName: string;
+  active: boolean;
 	position: number;
   health: number;
   combat: number;

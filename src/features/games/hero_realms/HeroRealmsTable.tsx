@@ -46,6 +46,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
     }
   }, [userTableView])
 
+  const isActivePlayer = table?.ownPlayerArea.active;
   const marketDeckSize = (table?.marketDeck) ? table.marketDeck.size : 0;
   const ownDeckSize = (table?.ownPlayerArea.deck) ? table.ownPlayerArea.deck.size : 0;
   const ownDiscardSize = (table?.ownPlayerArea.discardPile) ? table.ownPlayerArea.discardPile.size : 0;
@@ -64,7 +65,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
         </Grid>
         <Grid item container xs={12} wrap="nowrap" className={classes.area}>
           <Grid item xs>
-            <Button onClick={() => {}} key="fireGemDeckButton">
+            <Button onClick={() => {}} key="fireGemDeckButton" disabled={!isActivePlayer}>
               <img src={"..//"+table?.fireGemsDeck.cards[0].image} alt="fire_gem" className={classes.image}/>
             </Button>
           </Grid>
@@ -72,7 +73,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           {table?.market.map(marketCard => {
             return (
               <Grid item xs>
-                <Button onClick={() => {}} key={"marketButton"+table?.market.indexOf(marketCard)}>
+                <Button onClick={() => {}} key={"marketButton"+table?.market.indexOf(marketCard)} disabled={!isActivePlayer}>
                   <img src={"..//"+marketCard.image} alt={marketCard.name} 
                     key={"MarketCard"+table?.market.indexOf(marketCard)} 
                     className={classes.image}/>
@@ -93,7 +94,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           {table?.ownPlayerArea.hand.map(handCard => {
             return (
               <Grid item xs>
-                <Button onClick={() => {}} key={"handButton"+table?.ownPlayerArea.hand.indexOf(handCard)}>
+                <Button onClick={() => {}} key={"handButton"+table?.ownPlayerArea.hand.indexOf(handCard)} disabled={!isActivePlayer}>
                   <img src={"..//"+handCard.image} alt={handCard.name} 
                     key={"HandCard"+table?.ownPlayerArea.hand.indexOf(handCard)} 
                     className={classes.image}/>
