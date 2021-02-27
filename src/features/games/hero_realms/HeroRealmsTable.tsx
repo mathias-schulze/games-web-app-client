@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Grid, Button, makeStyles, Avatar } from '@material-ui/core';
+import { Grid, Button, makeStyles, Avatar, Fab } from '@material-ui/core';
+import { ExitToApp } from '@material-ui/icons';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
+import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_END_TURN_ENDPOINT } from '../../common/api/api';
 import { getAuth } from '../../common/auth/authSlice'
 import { HeroRealmsTableView } from './HeroRealmsTypes'
 
@@ -29,6 +31,14 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.primary.light,
   },
+  endTurnButton: {
+    position: 'fixed',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  },
+  endTurnButtonIcon: {
+    marginRight: theme.spacing(1),
+  },
 }));
 
 function HeroRealmsTable(props: HeroRealmsTableProps) {
@@ -39,10 +49,12 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
     firestore.collection(COLLECTION_GAMES).doc(props.id).collection(COLLECTION_TABLE).doc(userId?userId:"x")
   );
   const [ table, setTable ] = useState<HeroRealmsTableView>();
-  
+  const [ endTurnButtonAvailable, setEndTurnButtonAvailable ] = useState<boolean>(false);
+
   useEffect(() => {
     if (userTableView) {
       setTable(userTableView.data());
+      setEndTurnButtonAvailable(userTableView.data().ownPlayerArea.active);
     }
   }, [userTableView])
 
@@ -50,6 +62,16 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
   const marketDeckSize = (table?.marketDeck) ? table.marketDeck.size : 0;
   const ownDeckSize = (table?.ownPlayerArea.deck) ? table.ownPlayerArea.deck.size : 0;
   const ownDiscardSize = (table?.ownPlayerArea.discardPile) ? table.ownPlayerArea.discardPile.size : 0;
+
+
+  const endTurn = async () => {
+
+    setEndTurnButtonAvailable(false);
+
+    await api.post(HERO_REALMS_ENDPOINT + '/' + props.id + HERO_REALMS_END_TURN_ENDPOINT)
+        .then()
+        .catch(error => {});
+  }
 
   return (
     <div>
@@ -119,6 +141,13 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           
         </Grid>
       </Grid>
+      
+      {endTurnButtonAvailable &&
+        <Fab variant="extended" color="primary" className={classes.endTurnButton} onClick={() => endTurn()}>
+          <ExitToApp className={classes.endTurnButtonIcon}/>
+          Zug beenden
+        </Fab>
+      }
 
       {userTableView && <pre>{JSON.stringify(userTableView.data(), null, 2)}</pre>}
     </div>

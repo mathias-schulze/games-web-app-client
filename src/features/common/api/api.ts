@@ -9,6 +9,8 @@ export const GAMES_PARAM_ENDPOINT = GAMES_ENDPOINT + '/parameter';
 export const GAMES_ACTIVE_ENDPOINT = GAMES_ENDPOINT + '/active';
 export const GAMES_JOIN_ENDPOINT = '/join';
 export const GAMES_START_ENDPOINT = '/start';
+export const HERO_REALMS_ENDPOINT = '/hero_realms';
+export const HERO_REALMS_END_TURN_ENDPOINT = '/end_turn';
 export const PLAYERS_ENDPOINT = 'players';
 
 const instance = axios.create({
