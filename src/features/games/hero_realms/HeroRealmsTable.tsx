@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Grid, Button, makeStyles, Avatar, Fab } from '@material-ui/core';
+import { Grid, Button, makeStyles, Avatar, Fab, Box } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
+import { green, yellow, red } from '@material-ui/core/colors';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
 import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_END_TURN_ENDPOINT } from '../../common/api/api';
 import { getAuth } from '../../common/auth/authSlice'
@@ -38,6 +39,24 @@ const useStyles = makeStyles(theme => ({
   },
   endTurnButtonIcon: {
     marginRight: theme.spacing(1),
+  },
+  health: {
+    margin: theme.spacing(1),
+    marginLeft: theme.spacing(0),
+    color: 'black',
+    backgroundColor: green[400],
+  },
+  gold: {
+    margin: theme.spacing(1),
+    marginLeft: theme.spacing(0),
+    color: 'black',
+    backgroundColor: yellow[600],
+  },
+  combat: {
+    margin: theme.spacing(1),
+    marginLeft: theme.spacing(0),
+    color: 'black',
+    backgroundColor: red[400],
   },
 }));
 
@@ -80,7 +99,12 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           {table?.otherPlayerAreas.map(area => {
             return (
               <Grid item container xs className={classes.area}>
-                {area.playerName}
+                <Box display="flex" flexGrow={1}>
+                  <Box justifyContent="flex-start" flexGrow={1}>
+                    {area.playerName}
+                  </Box>
+                </Box>
+                <HealthGoldCombatIndicator activePlayer={area.active} health={area.health} gold={area.gold} combat={area.combat}/>
               </Grid>
             )})
           }
@@ -110,6 +134,17 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
               <img src={"..//"+((marketDeckSize > 0) ? table?.cardBack : table?.emptyDeck)} alt="market deck" className={classes.image}/>
             </Button>
           </Grid>
+        </Grid>
+        <Grid item container xs={12} className={classes.area}>
+          <Box display="flex" flexGrow={1}>
+            <Box justifyContent="flex-start" flexGrow={1}/>
+          </Box>
+          {table?.ownPlayerArea &&
+            <HealthGoldCombatIndicator activePlayer={table?.ownPlayerArea.active} 
+                health={table?.ownPlayerArea.health} 
+                gold={table?.ownPlayerArea.gold} 
+                combat={table?.ownPlayerArea.combat}/>
+          }
         </Grid>
         <Grid item container xs={12} className={classes.area}>
 
@@ -151,6 +186,30 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
 
       {userTableView && <pre>{JSON.stringify(userTableView.data(), null, 2)}</pre>}
     </div>
+  )
+}
+
+interface HealthGoldCombatIndicatorProps {
+    activePlayer: boolean;
+    health: number;
+    gold: number;
+    combat: number;
+}
+
+function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
+
+  const classes = useStyles();
+
+  return (
+    <Box display="flex" justifyContent="flex-end">
+      <Avatar className={classes.health}>{props.health}</Avatar>
+      {props.activePlayer &&
+        <Fragment>
+          <Avatar className={classes.gold}>{props.gold}</Avatar>
+          <Avatar className={classes.combat}>{props.combat}</Avatar>
+        </Fragment>
+      }
+    </Box>
   )
 }
 
