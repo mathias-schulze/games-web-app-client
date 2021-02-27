@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Grid, Button, makeStyles, Avatar, Fab, Box } from '@material-ui/core';
+import { Grid, Button, makeStyles, Avatar, Fab, Box, Typography } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
 import { green, yellow, red } from '@material-ui/core/colors';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
@@ -100,8 +100,8 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
             return (
               <Grid item container xs className={classes.area}>
                 <Box display="flex" flexGrow={1}>
-                  <Box justifyContent="flex-start" flexGrow={1}>
-                    {area.playerName}
+                  <Box display="flex" justifyContent="flex-start" alignItems="center" flexGrow={1} margin={1}>
+                    <Typography variant="h6">{area.playerName}</Typography>
                   </Box>
                 </Box>
                 <HealthGoldCombatIndicator activePlayer={area.active} health={area.health} gold={area.gold} combat={area.combat}/>
