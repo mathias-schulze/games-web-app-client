@@ -1,3 +1,7 @@
+export interface HeroRealmsTableViewProps {
+    table: HeroRealmsTableView;
+}
+
 export interface HeroRealmsTableView {
   players: Player[];
   activePlayer: Player;
