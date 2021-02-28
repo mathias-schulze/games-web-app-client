@@ -21,11 +21,18 @@ const useStyles = makeStyles(theme => ({
   image: {
     width: "200px",
   },
-  avatar: {
+  deckCount: {
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.dark,
     position: "absolute",
     right: "30px",
+    top: "30px",
+  },
+  deckCountLeft: {
+    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.primary.dark,
+    position: "absolute",
+    left: "30px",
     top: "30px",
   },
   area: {
@@ -79,6 +86,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
 
   const isActivePlayer = table?.ownPlayerArea.active;
   const marketDeckSize = (table?.marketDeck) ? table.marketDeck.size : 0;
+  const fireGemsDeckSize = (table?.fireGemsDeck) ? table.fireGemsDeck.size : 0;
   const ownDeckSize = (table?.ownPlayerArea.deck) ? table.ownPlayerArea.deck.size : 0;
   const ownDiscardSize = (table?.ownPlayerArea.discardPile) ? table.ownPlayerArea.discardPile.size : 0;
 
@@ -112,6 +120,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
         <Grid item container xs={12} wrap="nowrap" className={classes.area}>
           <Grid item xs>
             <Button onClick={() => {}} key="fireGemDeckButton" disabled={!isActivePlayer}>
+              <Avatar className={classes.deckCountLeft}>{fireGemsDeckSize}</Avatar>
               <img src={"..//"+table?.fireGemsDeck.cards[0].image} alt="fire_gem" className={classes.image}/>
             </Button>
           </Grid>
@@ -130,7 +139,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
 
           <Grid item>
             <Button onClick={() => {}} key="marketDeckButton" disabled>
-              <Avatar className={classes.avatar}>{marketDeckSize}</Avatar>
+              <Avatar className={classes.deckCount}>{marketDeckSize}</Avatar>
               <img src={"..//"+((marketDeckSize > 0) ? table?.cardBack : table?.emptyDeck)} alt="market deck" className={classes.image}/>
             </Button>
           </Grid>
@@ -162,14 +171,14 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
 
           <Grid item xs>
             <Button onClick={() => {}} key="deckButton" disabled>
-              <Avatar className={classes.avatar}>{ownDeckSize}</Avatar>
+              <Avatar className={classes.deckCount}>{ownDeckSize}</Avatar>
               <img src={"..//"+((ownDeckSize > 0) ? table?.cardBack : table?.emptyDeck)} alt="deck" className={classes.image}/>
             </Button>
           </Grid>
 
           <Grid item>
             <Button onClick={() => {}} key="discardPileButton" disabled>
-              <Avatar className={classes.avatar}>{ownDiscardSize}</Avatar>
+              <Avatar className={classes.deckCount}>{ownDiscardSize}</Avatar>
               <img src={"..//"+((ownDiscardSize > 0) ? table?.cardBack : table?.emptyDeck)} alt="discard pile" className={classes.image}/>
             </Button>
           </Grid>
