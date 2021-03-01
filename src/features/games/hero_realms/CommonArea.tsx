@@ -33,8 +33,8 @@ function Market(props: HeroRealmsTableViewProps) {
     <Fragment>
       {props.table.market.map(marketCard => {
         return (
-          <Grid item xs>
-            <Card key={"marketCard"+props.table.market.indexOf(marketCard)} alt={marketCard.name} image={marketCard.image}
+          <Grid item xs key={"marketCardGrid"+marketCard.id}>
+            <Card key={"marketCard"+marketCard.id} alt={marketCard.name} image={marketCard.image}
                 onClick={() => {}} disabled={!props.table.ownPlayerArea.active}/>
           </Grid>
         )})

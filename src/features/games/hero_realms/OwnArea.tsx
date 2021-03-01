@@ -35,8 +35,8 @@ function OwnArea(props: OwnAreaProps) {
 
           {area.hand.map(handCard => {
             return (
-              <Grid item xs>
-                <Card key={"handCard"+area.hand.indexOf(handCard)} alt={handCard.name} image={handCard.image}
+              <Grid item xs key={"handCardGrid"+handCard.id}>
+                <Card key={"handCard"+handCard.id} alt={handCard.name} image={handCard.image}
                     onClick={() => {}} disabled={!area.active}/>
               </Grid>
             )})
