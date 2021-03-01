@@ -60,7 +60,7 @@ export function Deck(props: DeckProps) {
   const classes = useStyles();
 
   return (
-    <Button onClick={() => props.onClick} disabled={props.disabled}>
+    <Button onClick={props.onClick} disabled={props.disabled}>
       <Avatar className={classes.deckCount}>{props.count}</Avatar>
       <img src={"..//"+((props.count > 0) ? props.image : props.emptyImage)} alt={props.alt} className={classes.image}/>
     </Button>
@@ -79,7 +79,7 @@ export function Card(props: CardProps) {
   const classes = useStyles();
 
   return (
-    <Button onClick={() => props.onClick} disabled={props.disabled}>
+    <Button onClick={props.onClick} disabled={props.disabled}>
       <img src={"..//"+props.image} alt={props.alt} className={classes.image}/>
     </Button>
   )
