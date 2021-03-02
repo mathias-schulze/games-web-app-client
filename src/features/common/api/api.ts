@@ -11,6 +11,7 @@ export const GAMES_JOIN_ENDPOINT = '/join';
 export const GAMES_START_ENDPOINT = '/start';
 export const HERO_REALMS_ENDPOINT = '/hero_realms';
 export const HERO_REALMS_END_TURN_ENDPOINT = '/end_turn';
+export const HERO_REALMS_PLAY_CARD_ENDPOINT = '/play_card';
 export const PLAYERS_ENDPOINT = 'players';
 
 const instance = axios.create({

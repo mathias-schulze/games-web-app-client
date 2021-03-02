@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { Grid, Fab, Box } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
-import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_END_TURN_ENDPOINT } from '../../common/api/api';
+import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_END_TURN_ENDPOINT, HERO_REALMS_PLAY_CARD_ENDPOINT } from '../../common/api/api';
 import { useStyles } from './HeroRealmsTableStyles'
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, Deck } from './HeroRealmsTable';
@@ -20,6 +20,12 @@ function OwnArea(props: OwnAreaProps) {
 
   const area = props.area;
 
+  const playCard = async (id: string) => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_PLAY_CARD_ENDPOINT, {cardId: id})
+        .then()
+        .catch(error => {});
+  }
+
   return (
     <Fragment>
         <Grid item container xs={12} className={classes.area}>
@@ -37,7 +43,7 @@ function OwnArea(props: OwnAreaProps) {
             return (
               <Grid item xs key={"handCardGrid"+handCard.id}>
                 <Card key={"handCard"+handCard.id} alt={handCard.name} image={handCard.image}
-                    onClick={() => {}} disabled={!area.active}/>
+                    onClick={() => {playCard(handCard.id)}} disabled={!area.active}/>
               </Grid>
             )})
           }
