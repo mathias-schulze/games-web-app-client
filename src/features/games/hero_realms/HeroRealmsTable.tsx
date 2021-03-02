@@ -36,7 +36,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           <Grid item container xs={12}>
             {table.otherPlayerAreas.map(area => { return <OtherArea area={area} key={"area"+area.playerId}/> })}
           </Grid>
-          <CommonArea table={table}/>
+          <CommonArea id={props.id} table={table}/>
           <OwnArea id={props.id} area={table.ownPlayerArea} back={table.cardBack} empty={table.emptyDeck}/>
         </Grid>
       }

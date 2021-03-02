@@ -1,5 +1,6 @@
 export interface HeroRealmsTableViewProps {
-    table: HeroRealmsTableView;
+  id: string;
+  table: HeroRealmsTableView;
 }
 
 export interface HeroRealmsTableView {
