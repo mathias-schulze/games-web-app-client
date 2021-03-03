@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Grid, Fab, Box } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
 import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_END_TURN_ENDPOINT, HERO_REALMS_PLAY_CARD_ENDPOINT } from '../../common/api/api';
@@ -79,7 +79,11 @@ function EndTurnButton(props: EndTurnButtonProps) {
 
   const classes = useStyles();
 
-  const [ endTurnButtonAvailable, setEndTurnButtonAvailable ] = useState<boolean>(props.area.active);
+  const [ endTurnButtonAvailable, setEndTurnButtonAvailable ] = useState<boolean>(false);
+
+  useEffect(() => {
+    setEndTurnButtonAvailable(props.area.active);
+  }, [props.area.active])
 
   const endTurn = async () => {
 
