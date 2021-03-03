@@ -6,6 +6,7 @@ import { useStyles } from './HeroRealmsTableStyles'
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, Deck } from './HeroRealmsTable';
 import { PlayerArea } from './HeroRealmsTypes';
+import PlayedCards from './PlayedCards';
 
 export interface OwnAreaProps {
   id: string;
@@ -37,6 +38,9 @@ function OwnArea(props: OwnAreaProps) {
               gold={area.gold} 
               combat={area.combat}/>
         </Grid>
+        {area.active &&
+          <PlayedCards id={props.id} area={area}/>
+        }
         <Grid item container xs={12} className={classes.area}>
 
           {area.hand.map(handCard => {

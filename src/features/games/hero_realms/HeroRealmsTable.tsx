@@ -9,6 +9,7 @@ import { useStyles } from './HeroRealmsTableStyles'
 import OtherArea from './OtherArea';
 import CommonArea from './CommonArea';
 import OwnArea from './OwnArea';
+import PlayedCards from './PlayedCards';
 
 export interface HeroRealmsTableProps {
     id: string;
@@ -36,6 +37,8 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           <Grid item container xs={12}>
             {table.otherPlayerAreas.map(area => { return <OtherArea area={area} key={"area"+area.playerId}/> })}
           </Grid>
+          {table.otherPlayerAreas.filter(area => area.active)
+              .map(area => { return <PlayedCards id={props.id} area={area}/> })}
           <CommonArea id={props.id} table={table}/>
           <OwnArea id={props.id} area={table.ownPlayerArea} back={table.cardBack} empty={table.emptyDeck}/>
         </Grid>
