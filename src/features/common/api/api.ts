@@ -27,6 +27,17 @@ instance.interceptors.request.use(req => {
 });
 
 instance.interceptors.response.use(resp => {
+
+  const notifications:any[] = resp.data?.notifications;
+  if (notifications) {
+    notifications.forEach(notification => {
+      store.dispatch(addNotification({
+        type: notification.type.toLowerCase(),
+        message: notification.message,
+      }));
+    });
+  }
+
   return resp;
 }, error => {
   const connected = store.getState().api.connected;
