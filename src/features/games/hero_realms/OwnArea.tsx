@@ -20,7 +20,7 @@ function OwnArea(props: OwnAreaProps) {
   const classes = useStyles();
 
   const area = props.area;
-  const discardPileImage = area.discardPile.size == 0 ? props.back : area.discardPile.cards[area.discardPile.cards.length-1].image;
+  const discardPileImage = area.discardPile.size === 0 ? props.back : area.discardPile.cards[area.discardPile.cards.length-1].image;
 
   const playCard = async (id: string) => {
     await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_PLAY_CARD_ENDPOINT, {cardId: id})
