@@ -7,21 +7,30 @@ export const useStyles = makeStyles(theme => ({
     width: "100%",
   },
   image: {
-    width: "200px",
+    width: "120px",
+  },
+  imageLarge: {
+    width: "300px",
   },
   deckCount: {
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.dark,
     position: "absolute",
-    right: "30px",
-    top: "30px",
+    right: "20px",
+    top: "20px",
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    fontSize: 12,
   },
   deckCountLeft: {
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.dark,
     position: "absolute",
-    left: "30px",
-    top: "30px",
+    left: "20px",
+    top: "20px",
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    fontSize: 12,
   },
   area: {
     border: '1px solid',
@@ -52,5 +61,8 @@ export const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(0),
     color: 'black',
     backgroundColor: red[400],
+  },
+  popover: {
+    pointerEvents: 'none',
   },
 }));

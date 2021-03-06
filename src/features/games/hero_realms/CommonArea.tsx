@@ -20,7 +20,7 @@ function CommonArea(props: HeroRealmsTableViewProps) {
   return (
     <Grid item container xs={12} wrap="nowrap" className={classes.area}>
       <Grid item xs>
-        <Deck key="fireGemsDeck" alt="fire gems deck" count={fireGemsCount} 
+        <Deck key="fireGemsDeck" alt="fire gems deck" count={fireGemsCount} counterLeft
             image={fireGemsImage} emptyImage={props.table.emptyDeck}
             onClick={() => {buyFireGem()}} disabled={!props.table.ownPlayerArea.active}/>
       </Grid>

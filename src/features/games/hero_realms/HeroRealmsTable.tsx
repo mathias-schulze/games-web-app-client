@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Grid, Button, Avatar } from '@material-ui/core';
+import { Grid, Button, Avatar, Popover, Paper } from '@material-ui/core';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
 import { getAuth } from '../../common/auth/authSlice'
 import { HeroRealmsTableView } from './HeroRealmsTypes'
@@ -52,6 +52,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
 export interface DeckProps {
   alt: string;
   count: number;
+  counterLeft?: boolean;
   image: string;
   emptyImage: string;
   disabled: boolean;
@@ -64,7 +65,7 @@ export function Deck(props: DeckProps) {
 
   return (
     <Button onClick={props.onClick} disabled={props.disabled}>
-      <Avatar className={classes.deckCount}>{props.count}</Avatar>
+      <Avatar className={props.counterLeft ? classes.deckCountLeft : classes.deckCount}>{props.count}</Avatar>
       <img src={"..//"+((props.count > 0) ? props.image : props.emptyImage)} alt={props.alt} className={classes.image}/>
     </Button>
   )
@@ -80,11 +81,34 @@ export interface CardProps {
 export function Card(props: CardProps) {
 
   const classes = useStyles();
+  
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const popoverOpen = Boolean(anchorEl);
 
   return (
-    <Button onClick={props.onClick} disabled={props.disabled}>
-      <img src={"..//"+props.image} alt={props.alt} className={classes.image}/>
-    </Button>
+    <Fragment>
+      <Paper square aria-owns={popoverOpen ? 'mouse-over-popover' : undefined} aria-haspopup="true"
+          onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
+        <Button onClick={props.onClick} disabled={props.disabled}>
+          <img src={"..//"+props.image} alt={props.alt} className={classes.image}/>
+        </Button>
+      </Paper>
+      <Popover id="mouse-over-popover" className={classes.popover}
+          open={popoverOpen} anchorEl={anchorEl} disableRestoreFocus
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <img src={"..//"+props.image} alt={props.alt} className={classes.imageLarge}/>
+      </Popover>
+    </Fragment>
   )
 }
 
