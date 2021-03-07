@@ -36,6 +36,8 @@ function CommonArea(props: HeroRealmsTableViewProps) {
 
 function Market(props: HeroRealmsTableViewProps) {
 
+  let index = 0;
+
   const buyCard = async (id: string) => {
     await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_BUY_MARKET_CARD_ENDPOINT, {cardId: id})
         .then()
@@ -45,10 +47,16 @@ function Market(props: HeroRealmsTableViewProps) {
   return (
     <Fragment>
       {props.table.market.map(marketCard => {
+        index++;
+        const id = (marketCard === null ? "empty" + index : marketCard.id);
+        const name = (marketCard === null ? "empty market " + index : marketCard.name);
+        const image = (marketCard === null ? props.table.emptyDeck : marketCard.image);
+        const disabled = (marketCard === null ? true : !props.table.ownPlayerArea.active);
+
         return (
-          <Grid item xs key={"marketCardGrid"+marketCard.id}>
-            <Card key={"marketCard"+marketCard.id} alt={marketCard.name} image={marketCard.image}
-                onClick={() => {buyCard(marketCard.id)}} disabled={!props.table.ownPlayerArea.active}/>
+          <Grid item xs key={"marketCardGrid"+id}>
+            <Card key={"marketCard"+id} alt={name} image={image}
+                onClick={() => {buyCard(id)}} disabled={disabled}/>
           </Grid>
         )})
       }
