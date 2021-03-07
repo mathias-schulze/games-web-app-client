@@ -7,6 +7,7 @@ import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, Deck } from './HeroRealmsTable';
 import { PlayerArea } from './HeroRealmsTypes';
 import PlayedCards from './PlayedCards';
+import PlayedChampions from './PlayedChampions';
 
 export interface OwnAreaProps {
   id: string;
@@ -36,6 +37,7 @@ function OwnArea(props: OwnAreaProps) {
           </Box>
           <HealthGoldCombatIndicator id={props.id} area={area}/>
         </Grid>
+        <PlayedChampions id={props.id} area={area}/>
         {area.active &&
           <PlayedCards id={props.id} area={area}/>
         }

@@ -3,6 +3,7 @@ import { Grid, Box, Typography } from '@material-ui/core';
 import { PlayerArea } from './HeroRealmsTypes'
 import { useStyles } from './HeroRealmsTableStyles'
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
+import PlayedChampions from './PlayedChampions';
 
 interface OtherAreaProps {
   id: string;
@@ -17,12 +18,17 @@ function OtherArea(props: OtherAreaProps) {
 
   return (
     <Grid item container xs className={classes.area}>
-      <Box display="flex" flexGrow={1}>
-        <Box display="flex" justifyContent="flex-start" alignItems="center" flexGrow={1} margin={1}>
-          <Typography variant="h6">{area.playerName}</Typography>
+      <Grid item container>
+        <Box display="flex" flexGrow={1}>
+          <Box display="flex" justifyContent="flex-start" alignItems="center" flexGrow={1} margin={1}>
+            <Typography variant="h6">{area.playerName}</Typography>
+          </Box>
         </Box>
-      </Box>
-      <HealthGoldCombatIndicator id={props.id} area={area} availableCombat={props.availableCombat}/>
+        <HealthGoldCombatIndicator id={props.id} area={area} availableCombat={props.availableCombat}/>
+      </Grid>
+      <Grid item container>
+        <PlayedChampions id={props.id} area={area}/>
+      </Grid>
     </Grid>  
   )
 }
