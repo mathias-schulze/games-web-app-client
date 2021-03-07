@@ -5,7 +5,9 @@ import { useStyles } from './HeroRealmsTableStyles'
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 
 interface OtherAreaProps {
+  id: string;
   area: PlayerArea;
+  availableCombat: number;
 }
 
 function OtherArea(props: OtherAreaProps) {
@@ -20,7 +22,7 @@ function OtherArea(props: OtherAreaProps) {
           <Typography variant="h6">{area.playerName}</Typography>
         </Box>
       </Box>
-      <HealthGoldCombatIndicator activePlayer={area.active} health={area.health} gold={area.gold} combat={area.combat}/>
+      <HealthGoldCombatIndicator id={props.id} area={area} availableCombat={props.availableCombat}/>
     </Grid>  
   )
 }

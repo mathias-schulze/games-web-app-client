@@ -46,21 +46,30 @@ export const useStyles = makeStyles(theme => ({
   },
   health: {
     margin: theme.spacing(1),
-    marginLeft: theme.spacing(0),
     color: 'black',
     backgroundColor: green[400],
+    "&$buttonDisabled": {
+      color: 'black',
+    },
   },
   gold: {
     margin: theme.spacing(1),
-    marginLeft: theme.spacing(0),
     color: 'black',
     backgroundColor: yellow[600],
+    "&$buttonDisabled": {
+      color: 'black',
+    },
   },
   combat: {
     margin: theme.spacing(1),
-    marginLeft: theme.spacing(0),
     color: 'black',
     backgroundColor: red[400],
+    "&$buttonDisabled": {
+      color: 'black',
+    },
+  },
+  buttonDisabled: {
+    disabled: 'black',
   },
   popover: {
     pointerEvents: 'none',

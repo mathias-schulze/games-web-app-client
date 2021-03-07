@@ -34,10 +34,7 @@ function OwnArea(props: OwnAreaProps) {
           <Box display="flex" flexGrow={1}>
             <Box justifyContent="flex-start" flexGrow={1}/>
           </Box>
-          <HealthGoldCombatIndicator activePlayer={area.active} 
-              health={area.health} 
-              gold={area.gold} 
-              combat={area.combat}/>
+          <HealthGoldCombatIndicator id={props.id} area={area}/>
         </Grid>
         {area.active &&
           <PlayedCards id={props.id} area={area}/>

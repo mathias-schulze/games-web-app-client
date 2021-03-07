@@ -35,7 +35,10 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
       {table &&
         <Grid container className={classes.root}>
           <Grid item container xs={12}>
-            {table.otherPlayerAreas.map(area => { return <OtherArea area={area} key={"area"+area.playerId}/> })}
+            {table.otherPlayerAreas.map(area => {
+              return <OtherArea id={props.id} area={area} key={"area"+area.playerId}
+                  availableCombat={table.ownPlayerArea.combat}/> })
+            }
           </Grid>
           {table.otherPlayerAreas.filter(area => area.active)
               .map(area => { return <PlayedCards id={props.id} area={area}/> })}
