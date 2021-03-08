@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppBar, Toolbar, IconButton, Avatar, Link } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Avatar, Link, Box, Typography } from '@material-ui/core';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { PowerSettingsNew } from '@material-ui/icons'
+import { Menu, PowerSettingsNew } from '@material-ui/icons'
 import { getAuth, isSignedIn } from '../auth/authSlice'
 import { firestore, firebaseAuth, COLLECTION_USERS } from '../firebase/Firebase';
 import { setVerified, updateIdToken } from '../auth/authSlice'
@@ -15,8 +15,15 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flexGrow: 1,
     },
+    titleBox: {
+      alignItems: "center",
+    },
     title: {
+      margin: theme.spacing(1),
+    },
+    icons: {
       flexGrow: 1,
+      justifyContent: "flex-end",
     },
     logoutButton: {
       color: "inherit",
@@ -50,19 +57,25 @@ function GamesAppBar() {
       {signedIn &&
         <AppBar position="static" className={classes.root}>
           <Toolbar>
-            <Link href="/" variant="h6" color="inherit" underline="none" 
+            <Link href="/" color="inherit" underline="none" 
                 onClick={(e: React.SyntheticEvent) => {
                   e.preventDefault();
                   history.push("/");
-                }}
-                className={classes.title}>
-              Spiele
+                }}>
+              <Box display="flex" className={classes.titleBox}>
+                <Menu fontSize="large"/>
+                <Typography variant="h6" className={classes.title}>Spiele</Typography>
+              </Box>
             </Link>
-            <PlayerAvatar/>
-            <ServerConnection/>
-            <IconButton edge="end" className={classes.logoutButton} href="/signout">
-              <PowerSettingsNew fontSize="large"/>
-            </IconButton>
+            <Box display="flex" className={classes.icons}>
+              <IconButton edge="end">
+                <PlayerAvatar/>
+              </IconButton>
+              <ServerConnection/>
+              <IconButton edge="end" className={classes.logoutButton} href="/signout">
+                <PowerSettingsNew fontSize="large"/>
+              </IconButton>
+            </Box>
           </Toolbar>
         </AppBar>
       }
