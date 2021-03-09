@@ -1,19 +1,45 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Grid, Fab, Box } from '@material-ui/core';
+import { Fab, Box, makeStyles } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
 import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_END_TURN_ENDPOINT, HERO_REALMS_PLAY_CARD_ENDPOINT } from '../../common/api/api';
-import { useStyles } from './HeroRealmsTableStyles'
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
-import { Card, Deck } from './HeroRealmsTable';
-import { PlayerArea } from './HeroRealmsTypes';
+import { Card, PlayerDeckAndDiscard, playerColors } from './HeroRealmsTable';
+import { HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes';
 import PlayedCards from './PlayedCards';
 import PlayedChampions from './PlayedChampions';
 
+export const useStyles = makeStyles(theme => ({
+  ownArea: {
+    display: "flex",
+    flexGrow: 1,
+    flexFlow: "column wrap",
+    width: "100%",
+  },
+  cards: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  hand: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  endTurnButton: {
+    position: 'fixed',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  },
+  endTurnButtonIcon: {
+    marginRight: theme.spacing(1),
+  },
+}));
+
 export interface OwnAreaProps {
   id: string;
+  table: HeroRealmsTableView;
   area: PlayerArea;
-  back: string;
-  empty: string;
 }
 
 function OwnArea(props: OwnAreaProps) {
@@ -21,7 +47,6 @@ function OwnArea(props: OwnAreaProps) {
   const classes = useStyles();
 
   const area = props.area;
-  const discardPileImage = area.discardPile.size === 0 ? props.back : area.discardPile.cards[area.discardPile.cards.length-1].image;
 
   const playCard = async (id: string) => {
     await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_PLAY_CARD_ENDPOINT, {cardId: id})
@@ -30,43 +55,25 @@ function OwnArea(props: OwnAreaProps) {
   }
 
   return (
-    <Fragment>
-        <Grid item container xs={12} className={classes.area}>
-          <Box display="flex" flexGrow={1}>
-            <Box justifyContent="flex-start" flexGrow={1}/>
-          </Box>
-          <HealthGoldCombatIndicator id={props.id} area={area}/>
-        </Grid>
-        <PlayedChampions id={props.id} area={area}/>
-        {area.active &&
-          <PlayedCards id={props.id} area={area}/>
-        }
-        <Grid item container xs={12} className={classes.area}>
-
+    <Box className={classes.ownArea} style={{backgroundColor: playerColors[area.position]}}>
+      <HealthGoldCombatIndicator id={props.id} area={area}/>
+      {area.active &&
+        <PlayedCards id={props.id} area={area} justifyContent="center"/>
+      }
+      <Box className={classes.cards}>
+        <PlayedChampions id={props.id} area={area} justifyContent="flex-start"/>
+        <Box className={classes.hand}>
           {area.hand.map(handCard => {
             return (
-              <Grid item xs key={"handCardGrid"+handCard.id}>
-                <Card key={"handCard"+handCard.id} alt={handCard.name} image={handCard.image}
-                    onClick={() => {playCard(handCard.id)}} disabled={!area.active}/>
-              </Grid>
+              <Card key={"handCard"+handCard.id} alt={handCard.name} image={handCard.image}
+                  onClick={() => {playCard(handCard.id)}} disabled={!area.active}/>
             )})
           }
-
-          <Grid item xs>
-            <Deck key="ownDeck" alt="own deck" count={area.deck.size} 
-                image={props.back} emptyImage={props.empty}
-                onClick={() => {}} disabled={true}/>
-          </Grid>
-
-          <Grid item>
-            <Deck key="discardPile" alt="discard pile" count={area.discardPile.size} 
-                image={discardPileImage} emptyImage={props.empty}
-                onClick={() => {}} disabled={true}/>
-          </Grid>
-      </Grid>
-      
+        </Box>
+        <PlayerDeckAndDiscard table={props.table} area={area}/>
+      </Box>
       <EndTurnButton id={props.id} area={area}/>
-    </Fragment>
+    </Box>
   )
 }
 

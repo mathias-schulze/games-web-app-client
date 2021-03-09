@@ -1,29 +1,37 @@
 import React from 'react'
-import { Grid } from '@material-ui/core';
+import { Box, makeStyles } from '@material-ui/core';
 import { PlayerArea } from './HeroRealmsTypes'
-import { useStyles } from './HeroRealmsTableStyles'
 import { Card } from './HeroRealmsTable';
+
+export const useStyles = makeStyles({
+  playedCahmpions: {
+    display: "flex",
+    flexGrow: 1,
+    width: "100%",
+  },
+});
 
 export interface PlayedChampionsProps {
   id: string;
   area: PlayerArea;
+  justifyContent: string;
 }
 
 function PlayedChampions(props: PlayedChampionsProps) {
 
-  const classes = useStyles();
+  const classes = useStyles(props);
 
   return (
-    <Grid item container xs={12} wrap="nowrap" className={classes.area}>
-      {props.area.champions.map(champion => {
-        return (
-          <Grid item xs key={"playedChampionsGrid"+champion.id}>
+    <Box>
+      <Box className={classes.playedCahmpions} justifyContent={props.justifyContent}>
+        {props.area.champions.map(champion => {
+          return (
             <Card key={"playedChampion"+champion.id} alt={champion.name} image={champion.image}
                 onClick={() => {}} disabled={true}/>
-          </Grid>
-        )})
-      }
-    </Grid>
+          )})
+        }
+      </Box>
+    </Box>
   )
 }
 

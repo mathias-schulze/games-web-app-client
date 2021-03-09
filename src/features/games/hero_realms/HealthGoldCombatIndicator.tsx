@@ -1,9 +1,52 @@
 import React, { Fragment, useState } from 'react'
-import { Avatar, Box, Button, IconButton, Popover } from '@material-ui/core';
-import { useStyles } from './HeroRealmsTableStyles'
+import { Avatar, Box, Button, IconButton, makeStyles, Popover, Typography } from '@material-ui/core';
 import { PlayerArea } from './HeroRealmsTypes';
 import { FirstPage, LastPage, NavigateBefore, NavigateNext, Security } from '@material-ui/icons';
 import api, { HERO_REALMS_ATTACK_ENDPOINT, HERO_REALMS_ENDPOINT } from '../../common/api/api';
+import { green, yellow, red } from '@material-ui/core/colors';
+
+export const useStyles = makeStyles(theme => ({
+  indicator: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "flex-end",
+    width: "100%",
+  },
+  title: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    margin: theme.spacing(1),
+  },
+  health: {
+    margin: theme.spacing(1),
+    color: 'black',
+    backgroundColor: green[400],
+    "&$buttonDisabled": {
+      color: 'black',
+    },
+  },
+  gold: {
+    margin: theme.spacing(1),
+    color: 'black',
+    backgroundColor: yellow[600],
+    "&$buttonDisabled": {
+      color: 'black',
+    },
+  },
+  combat: {
+    margin: theme.spacing(1),
+    color: 'black',
+    backgroundColor: red[400],
+    "&$buttonDisabled": {
+      color: 'black',
+    },
+  },
+  buttonDisabled: {
+    disabled: 'black',
+  },
+}));
 
 interface HealthGoldCombatIndicatorProps {
   id: string;
@@ -15,11 +58,12 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
 
   const classes = useStyles();
 
+  const area = props.area;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const attackAvailable = (props.availableCombat && props.availableCombat > 0);
   const attackPopoverOpen = Boolean(anchorEl && attackAvailable);
   const [attack, setAttack] = useState(0);
-  const hasGuard = (props.area.champions.filter(champion => {return (champion.type === "GUARD")}).length > 0);
+  const hasGuard = (area.champions.filter(champion => {return (champion.type === "GUARD")}).length > 0);
 
   function handleAttackClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
@@ -34,7 +78,7 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
     setAnchorEl(null);
     setAttack(0)
 
-    await api.post(HERO_REALMS_ENDPOINT + '/' + props.id + HERO_REALMS_ATTACK_ENDPOINT, {playerId: props.area.playerId, value: attack})
+    await api.post(HERO_REALMS_ENDPOINT + '/' + props.id + HERO_REALMS_ATTACK_ENDPOINT, {playerId: area.playerId, value: attack})
         .then()
         .catch(error => {});
   };
@@ -45,11 +89,15 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
   const increaseAttackMax = () => {setAttack(props.availableCombat ? props.availableCombat : 0)}
 
   return (
-    <Box display="flex" justifyContent="flex-end">
+    <Box className={classes.indicator}>
+      <Box className={classes.title}>
+        <Typography variant="h6">{area.playerName}</Typography>
+      </Box>
+
       <Avatar className={classes.health} aria-owns={attackPopoverOpen ? 'attack-popover' : undefined} aria-haspopup="true">
         <Button onClick={handleAttackClick} disabled={!attackAvailable}
             classes={{ root: classes.health, disabled: classes.buttonDisabled }}>
-          {props.area.health}
+          {area.health}
         </Button>
       </Avatar>
       <Popover id="attack-popover"
@@ -84,13 +132,13 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
           </IconButton>
         </Box>
       </Popover>
-      {props.area.active &&
+      {area.active &&
         <Fragment>
           <Avatar className={classes.gold}>
-            <Button classes={{ root: classes.gold, disabled: classes.buttonDisabled }} disabled>{props.area.gold}</Button>
+            <Button classes={{ root: classes.gold, disabled: classes.buttonDisabled }} disabled>{area.gold}</Button>
           </Avatar>
           <Avatar className={classes.combat}>
-            <Button classes={{ root: classes.combat, disabled: classes.buttonDisabled }} disabled>{props.area.combat}</Button>
+            <Button classes={{ root: classes.combat, disabled: classes.buttonDisabled }} disabled>{area.combat}</Button>
           </Avatar>
         </Fragment>
       }

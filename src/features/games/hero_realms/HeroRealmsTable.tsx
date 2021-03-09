@@ -1,15 +1,61 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Grid, Button, Avatar, Popover, Paper } from '@material-ui/core';
+import { Button, Avatar, Popover, Paper, Box, makeStyles } from '@material-ui/core';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
 import { getAuth } from '../../common/auth/authSlice'
-import { HeroRealmsTableView } from './HeroRealmsTypes'
-import { useStyles } from './HeroRealmsTableStyles'
+import { HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes'
 import OtherArea from './OtherArea';
 import CommonArea from './CommonArea';
 import OwnArea from './OwnArea';
 import PlayedCards from './PlayedCards';
+import { green, yellow, red, blue } from '@material-ui/core/colors';
+
+export const playerColors = [blue[50], green[50], red[50], yellow[50]];
+
+export const useStyles = makeStyles(theme => ({
+  table: {
+    display: "flex",
+    flexGrow: 1,
+    flexFlow: "column wrap",
+    width: "100%",
+  },
+  otherAreas: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  image: {
+    width: "110px",
+  },
+  imageLarge: {
+    width: "250px",
+  },
+  deckCount: {
+    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.primary.dark,
+    position: "absolute",
+    right: "20px",
+    top: "20px",
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    fontSize: 12,
+  },
+  deckCountLeft: {
+    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.primary.dark,
+    position: "absolute",
+    left: "20px",
+    top: "20px",
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    fontSize: 12,
+  },
+  popover: {
+    pointerEvents: 'none',
+  },
+}));
 
 export interface HeroRealmsTableProps {
     id: string;
@@ -30,21 +76,30 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
     }
   }, [userTableView])
 
+  const getJustifyContent = (table: HeroRealmsTableView, area: PlayerArea) => {
+    
+    const index = table.otherPlayerAreas.indexOf(area);
+    const size = table.otherPlayerAreas.length;
+    return (index === 0 ? "flex-start" : (index === size-1 ? "flex-end" : "center"));
+  }
+
   return (
     <div>
       {table &&
-        <Grid container className={classes.root}>
-          <Grid item container xs={12}>
+        <Box className={classes.table}>
+          <Box className={classes.otherAreas}>
             {table.otherPlayerAreas.map(area => {
-              return <OtherArea id={props.id} area={area} key={"area"+area.playerId}
-                  availableCombat={table.ownPlayerArea.combat}/> })
+              return <OtherArea id={props.id} table={table} area={area} key={"area"+area.playerId}
+                  justifyContent={getJustifyContent(table, area)} availableCombat={table.ownPlayerArea.combat}/> })
             }
-          </Grid>
+          </Box>
           {table.otherPlayerAreas.filter(area => area.active)
-              .map(area => { return <PlayedCards id={props.id} area={area}/> })}
+              .map(area => {
+                return <PlayedCards id={props.id} area={area} justifyContent={getJustifyContent(table, area)}/> })
+              }
           <CommonArea id={props.id} table={table}/>
-          <OwnArea id={props.id} area={table.ownPlayerArea} back={table.cardBack} empty={table.emptyDeck}/>
-        </Grid>
+          <OwnArea id={props.id} area={table.ownPlayerArea} table={table}/>
+        </Box>
       }
 
       {userTableView && <pre>{JSON.stringify(userTableView.data(), null, 2)}</pre>}
@@ -100,7 +155,7 @@ export function Card(props: CardProps) {
   return (
     <Fragment>
       <Paper square aria-owns={popoverOpen ? 'mouse-over-popover' : undefined} aria-haspopup="true"
-          onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
+          onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} style={{backgroundColor: "inherit"}}>
         <Button onClick={props.onClick} disabled={props.disabled}>
           <img src={"..//"+props.image} alt={props.alt} className={classes.image}/>
         </Button>
@@ -112,6 +167,30 @@ export function Card(props: CardProps) {
         <img src={"..//"+props.image} alt={props.alt} className={classes.imageLarge}/>
       </Popover>
     </Fragment>
+  )
+}
+
+export interface PlayerDeckAndDiscardProps {
+  table: HeroRealmsTableView;
+  area: PlayerArea;
+}
+
+export function PlayerDeckAndDiscard(props: PlayerDeckAndDiscardProps) {
+
+  const table = props.table;
+  const area = props.area;
+  const discardPileImage = ((area.discardPile.size === 0) ? table.emptyDeck : (area.discardPile.cards[area.discardPile.size-1].image));
+
+  return (
+    <Box>
+      <Deck alt="deck" count={area.deck.size} 
+          image={table.cardBack} emptyImage={table.emptyDeck}
+          onClick={() => {}} disabled={true}/>
+
+      <Deck alt="discard pile" count={area.discardPile.size} 
+          image={discardPileImage} emptyImage={table.emptyDeck}
+          onClick={() => {}} disabled={true}/>
+    </Box>
   )
 }
 

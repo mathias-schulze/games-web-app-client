@@ -1,13 +1,29 @@
 import React from 'react'
-import { Grid, Box, Typography } from '@material-ui/core';
-import { PlayerArea } from './HeroRealmsTypes'
-import { useStyles } from './HeroRealmsTableStyles'
+import { Box, makeStyles } from '@material-ui/core';
+import { HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes'
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import PlayedChampions from './PlayedChampions';
+import { PlayerDeckAndDiscard, playerColors } from './HeroRealmsTable';
+
+export const useStyles = makeStyles({
+  otherArea: {
+    display: "flex",
+    flexGrow: 1,
+    flexFlow: "column wrap",
+  },
+  cards: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "space-between",
+    width: "100%",
+  },
+});
 
 interface OtherAreaProps {
   id: string;
+  table: HeroRealmsTableView;
   area: PlayerArea;
+  justifyContent: string;
   availableCombat: number;
 }
 
@@ -17,19 +33,13 @@ function OtherArea(props: OtherAreaProps) {
   const area = props.area;
 
   return (
-    <Grid item container xs className={classes.area}>
-      <Grid item container>
-        <Box display="flex" flexGrow={1}>
-          <Box display="flex" justifyContent="flex-start" alignItems="center" flexGrow={1} margin={1}>
-            <Typography variant="h6">{area.playerName}</Typography>
-          </Box>
-        </Box>
-        <HealthGoldCombatIndicator id={props.id} area={area} availableCombat={props.availableCombat}/>
-      </Grid>
-      <Grid item container>
-        <PlayedChampions id={props.id} area={area}/>
-      </Grid>
-    </Grid>  
+    <Box className={classes.otherArea} style={{backgroundColor: playerColors[area.position]}}>
+      <HealthGoldCombatIndicator id={props.id} area={area} availableCombat={props.availableCombat}/>
+      <Box className={classes.cards}>
+        <PlayedChampions id={props.id} area={area} justifyContent={props.justifyContent}/>
+        <PlayerDeckAndDiscard table={props.table} area={area}/>
+      </Box>
+    </Box>  
   )
 }
 
