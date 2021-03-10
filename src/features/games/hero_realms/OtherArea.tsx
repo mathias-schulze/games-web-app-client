@@ -36,7 +36,8 @@ function OtherArea(props: OtherAreaProps) {
     <Box className={classes.otherArea} style={{backgroundColor: playerColors[area.position]}}>
       <HealthGoldCombatIndicator id={props.id} area={area} availableCombat={props.availableCombat}/>
       <Box className={classes.cards}>
-        <PlayedChampions id={props.id} area={area} justifyContent={props.justifyContent}/>
+        <PlayedChampions id={props.id} area={area} justifyContent={props.justifyContent} 
+            attack availableCombat={props.availableCombat}/>
         <PlayerDeckAndDiscard table={props.table} area={area}/>
       </Box>
     </Box>  
