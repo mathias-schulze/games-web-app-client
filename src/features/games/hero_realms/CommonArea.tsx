@@ -68,7 +68,7 @@ function Market(props: HeroRealmsTableViewProps) {
 
         return (
           <Card key={"marketCard"+id} alt={name} image={image}
-              onClick={() => {buyCard(id)}} disabled={disabled}/>
+              onClick={() => {buyCard(id)}} disabled={disabled} ready/>
         )})
       }
     </Box>

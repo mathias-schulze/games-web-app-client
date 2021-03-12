@@ -61,12 +61,12 @@ function OwnArea(props: OwnAreaProps) {
         <PlayedCards id={props.id} area={area} justifyContent="center"/>
       }
       <Box className={classes.cards}>
-        <PlayedChampions id={props.id} area={area} justifyContent="flex-start"/>
+        <PlayedChampions id={props.id} area={area} justifyContent="flex-start" own/>
         <Box className={classes.hand}>
           {area.hand.map(handCard => {
             return (
               <Card key={"handCard"+handCard.id} alt={handCard.name} image={handCard.image}
-                  onClick={() => {playCard(handCard.id)}} disabled={!area.active}/>
+                  onClick={() => {playCard(handCard.id)}} disabled={!area.active} ready/>
             )})
           }
         </Box>

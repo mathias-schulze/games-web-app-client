@@ -32,6 +32,9 @@ export const useStyles = makeStyles(theme => ({
   imageLarge: {
     width: "250px",
   },
+  notReady: {
+    opacity: 0.6,
+  },
   deckCount: {
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.dark,
@@ -133,6 +136,7 @@ export interface CardProps {
   alt: string;
   image: string;
   disabled: boolean;
+  ready: boolean,
   onClick: React.MouseEventHandler;
 }
 
@@ -140,6 +144,7 @@ export function Card(props: CardProps) {
 
   const classes = useStyles();
   
+  const imageClassName = props.ready ? "" : classes.notReady;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -155,7 +160,8 @@ export function Card(props: CardProps) {
   return (
     <Fragment>
       <Paper square aria-owns={popoverOpen ? 'mouse-over-popover' : undefined} aria-haspopup="true"
-          onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} style={{backgroundColor: "inherit"}}>
+          onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}
+          className={imageClassName} style={{backgroundColor: "inherit"}}>
         <Button onClick={props.onClick} disabled={props.disabled}>
           <img src={"..//"+props.image} alt={props.alt} className={classes.image}/>
         </Button>

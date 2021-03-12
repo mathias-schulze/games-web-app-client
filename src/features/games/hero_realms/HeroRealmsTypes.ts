@@ -34,6 +34,7 @@ export interface Card {
   faction: string;
   type: string;
   image: string;
+  ready: boolean;
 }
 
 export interface PlayerArea {

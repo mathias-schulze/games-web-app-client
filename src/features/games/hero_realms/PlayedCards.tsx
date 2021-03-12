@@ -33,7 +33,7 @@ function PlayedCards(props: PlayedCardsProps) {
       {props.area.playedCards.map(card => {
         return (
           <Card key={"playedCard"+card.id} alt={card.name} image={card.image}
-              onClick={() => {}} disabled={true}/>
+              onClick={() => {}} disabled={true} ready/>
         )})
       }
     </Box>
