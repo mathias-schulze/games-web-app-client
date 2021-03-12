@@ -11,7 +11,7 @@ import OwnArea from './OwnArea';
 import PlayedCards from './PlayedCards';
 import { green, yellow, red, blue } from '@material-ui/core/colors';
 
-export const playerColors = [blue[50], green[50], red[50], yellow[50]];
+export const playerColors = [blue[100], green[100], red[100], yellow[100]];
 
 export const useStyles = makeStyles(theme => ({
   table: {

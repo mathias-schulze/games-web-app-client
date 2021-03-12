@@ -34,7 +34,7 @@ function CommonArea(props: HeroRealmsTableViewProps) {
   }
 
   return (
-    <Box className={classes.commonArea} style={{backgroundColor: grey[100]}}>
+    <Box className={classes.commonArea} style={{backgroundColor: grey[400]}}>
       <Deck key="fireGemsDeck" alt="fire gems deck" count={fireGemsCount} counterLeft
           image={fireGemsImage} emptyImage={props.table.emptyDeck}
           onClick={() => {buyFireGem()}} disabled={!props.table.ownPlayerArea.active}/>
