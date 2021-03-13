@@ -17,6 +17,26 @@ export const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     justifyContent: "flex-start",
     alignItems: "center",
+    flexBasis: "33%",
+    margin: theme.spacing(1),
+    padding: theme.spacing(1),
+  },
+  faction: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "center",
+    flexBasis: "34%",
+    margin: theme.spacing(1),
+    padding: theme.spacing(1),
+    backgroundColor: "inherit",
+    height: "40px",
+  },
+  healthGoldCombat: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    flexBasis: "33%",
     margin: theme.spacing(1),
   },
   health: {
@@ -94,6 +114,14 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
         <Typography variant="h6">{area.playerName}</Typography>
       </Box>
 
+      <Box className={classes.faction}>
+        {area.factionCountGuild > 0 && <img src="..//..//extern//hero_realms//guild_icon.png" alt="guild"/>}
+        {area.factionCountImperial > 0 && <img src="..//..//extern//hero_realms//imperial_icon.png" alt="imperial"/>}
+        {area.factionCountNecros > 0 && <img src="..//..//extern//hero_realms//necros_icon.png" alt="necros"/>}
+        {area.factionCountWild > 0 && <img src="..//..//extern//hero_realms//wild_icon.png" alt="wild"/>}
+      </Box>
+
+      <Box className={classes.healthGoldCombat}>
       <Avatar className={classes.health} aria-owns={attackPopoverOpen ? 'attack-popover' : undefined} aria-haspopup="true">
         <Button onClick={handleAttackClick} disabled={!attackAvailable}
             classes={{ root: classes.health, disabled: classes.buttonDisabled }}>
@@ -142,6 +170,7 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
           </Avatar>
         </Fragment>
       }
+      </Box>
     </Box>
   )
 }

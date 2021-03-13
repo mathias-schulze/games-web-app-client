@@ -51,4 +51,8 @@ export interface PlayerArea {
   discardPile: Deck;
   playedCards: Card[];
   champions: Card[];
+  factionCountGuild: number;
+  factionCountImperial: number;
+  factionCountNecros: number;
+  factionCountWild: number;
 }
