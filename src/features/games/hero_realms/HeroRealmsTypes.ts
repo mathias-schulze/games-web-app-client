@@ -41,6 +41,7 @@ export interface PlayerArea {
   playerId: string;
   playerName: string;
   active: boolean;
+  killed: boolean;
 	position: number;
   health: number;
   combat: number;

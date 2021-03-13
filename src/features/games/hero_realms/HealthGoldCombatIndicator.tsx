@@ -3,7 +3,7 @@ import { Avatar, Box, Button, IconButton, makeStyles, Popover, Typography } from
 import { PlayerArea } from './HeroRealmsTypes';
 import { FirstPage, LastPage, NavigateBefore, NavigateNext, Security } from '@material-ui/icons';
 import api, { HERO_REALMS_ATTACK_ENDPOINT, HERO_REALMS_ENDPOINT } from '../../common/api/api';
-import { green, yellow, red } from '@material-ui/core/colors';
+import { green, yellow, red, grey } from '@material-ui/core/colors';
 
 export const useStyles = makeStyles(theme => ({
   indicator: {
@@ -47,6 +47,14 @@ export const useStyles = makeStyles(theme => ({
       color: 'black',
     },
   },
+  killed: {
+    margin: theme.spacing(1),
+    color: 'black',
+    backgroundColor: grey[400],
+    "&$buttonDisabled": {
+      color: 'black',
+    },
+  },
   gold: {
     margin: theme.spacing(1),
     color: 'black',
@@ -84,6 +92,7 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
   const attackPopoverOpen = Boolean(anchorEl && attackAvailable);
   const [attack, setAttack] = useState(0);
   const hasGuard = (area.champions.filter(champion => {return (champion.type === "GUARD")}).length > 0);
+  const healthClass = area.killed ? classes.killed : classes.health;
 
   function handleAttackClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
@@ -122,9 +131,9 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
       </Box>
 
       <Box className={classes.healthGoldCombat}>
-      <Avatar className={classes.health} aria-owns={attackPopoverOpen ? 'attack-popover' : undefined} aria-haspopup="true">
+      <Avatar className={healthClass} aria-owns={attackPopoverOpen ? 'attack-popover' : undefined} aria-haspopup="true">
         <Button onClick={handleAttackClick} disabled={!attackAvailable}
-            classes={{ root: classes.health, disabled: classes.buttonDisabled }}>
+            classes={{ root: healthClass, disabled: classes.buttonDisabled }}>
           {area.health}
         </Button>
       </Avatar>
