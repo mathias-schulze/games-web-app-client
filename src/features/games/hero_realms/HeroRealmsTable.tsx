@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Button, Avatar, Popover, Paper, Box, makeStyles } from '@material-ui/core';
+import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography } from '@material-ui/core';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
 import { getAuth } from '../../common/auth/authSlice'
+import { Stage } from '../../common/Const';
 import { HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes'
 import OtherArea from './OtherArea';
 import CommonArea from './CommonArea';
@@ -62,6 +63,7 @@ export const useStyles = makeStyles(theme => ({
 
 export interface HeroRealmsTableProps {
     id: string;
+    stage: Stage;
 }
 
 function HeroRealmsTable(props: HeroRealmsTableProps) {
@@ -98,16 +100,43 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           </Box>
           {table.otherPlayerAreas.filter(area => area.active)
               .map(area => {
-                return <PlayedCards id={props.id} area={area} justifyContent={getJustifyContent(table, area)}/> })
+                return <PlayedCards key={"playedCards"+area.playerId}
+                    id={props.id} area={area} justifyContent={getJustifyContent(table, area)}/> })
               }
           <CommonArea id={props.id} table={table}/>
           <OwnArea id={props.id} area={table.ownPlayerArea} table={table}/>
+          
+          {props.stage === Stage.FINISHED && <GameFinishedDialog table={table}/>}
         </Box>
       }
 
       {userTableView && <pre>{JSON.stringify(userTableView.data(), null, 2)}</pre>}
     </div>
   )
+}
+
+export interface GameFinishedDialogProps {
+  table: HeroRealmsTableView;
+}
+
+function GameFinishedDialog(props: GameFinishedDialogProps) {
+
+  let winner;
+  if (!props.table.ownPlayerArea.killed) {
+    winner = props.table.ownPlayerArea.playerName;
+  } else {
+    winner = props.table.otherPlayerAreas.filter(area => !area.killed)[0].playerName;
+  }
+
+  return (
+    <Dialog open={true}>
+      <DialogTitle>Spiel beendet</DialogTitle>
+      <DialogContent>
+        <Typography variant="subtitle1">Sieger:</Typography>
+        <Typography variant="h6" align="center">{winner}</Typography>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 export interface DeckProps {

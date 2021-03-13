@@ -28,8 +28,8 @@ function Game() {
       {(stage === Stage.NEW) &&
         <StartGameDialog id={params.id}/>
       }
-      {(stage === Stage.RUNNING) &&
-        <GameTable id={params.id} game={game}/>
+      {(stage === Stage.RUNNING || stage === Stage.FINISHED) &&
+        <GameTable id={params.id} game={game} stage={stage}/>
       }
     </div>
   )

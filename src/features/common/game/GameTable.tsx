@@ -1,10 +1,11 @@
 import React from 'react'
 import HeroRealmsTable from '../../games/hero_realms/HeroRealmsTable'
-import { GameType } from '../Const'
+import { GameType, Stage } from '../Const'
 
 interface GameTableProps {
     id: string,
     game: string | undefined;
+    stage: Stage;
 }
 
 function GameTable(props: GameTableProps) {
@@ -12,7 +13,7 @@ function GameTable(props: GameTableProps) {
   return (
     <div>
       {props.game === GameType.HERO_REALMS &&
-        <HeroRealmsTable id={props.id}/>
+        <HeroRealmsTable id={props.id} stage={props.stage}/>
       }
     </div>
   )
