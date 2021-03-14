@@ -59,6 +59,14 @@ export const useStyles = makeStyles(theme => ({
   popover: {
     pointerEvents: 'none',
   },
+  finishedContainer: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+  },
+  backdrop: {
+    position: 'absolute',
+  },
 }));
 
 export interface HeroRealmsTableProps {
@@ -109,8 +117,6 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           {props.stage === Stage.FINISHED && <GameFinishedDialog table={table}/>}
         </Box>
       }
-
-      {userTableView && <pre>{JSON.stringify(userTableView.data(), null, 2)}</pre>}
     </div>
   )
 }
@@ -121,6 +127,8 @@ export interface GameFinishedDialogProps {
 
 function GameFinishedDialog(props: GameFinishedDialogProps) {
 
+  const classes = useStyles();
+
   let winner;
   if (!props.table.ownPlayerArea.killed) {
     winner = props.table.ownPlayerArea.playerName;
@@ -129,13 +137,17 @@ function GameFinishedDialog(props: GameFinishedDialogProps) {
   }
 
   return (
-    <Dialog open={true}>
-      <DialogTitle>Spiel beendet</DialogTitle>
-      <DialogContent>
-        <Typography variant="subtitle1">Sieger:</Typography>
-        <Typography variant="h6" align="center">{winner}</Typography>
-      </DialogContent>
-    </Dialog>
+    <Box className={classes.finishedContainer}>
+      <Dialog open={true} disablePortal
+          style={{ position: "absolute" }}
+          BackdropProps={{ classes: { root: classes.backdrop } }}>
+        <DialogTitle>Spiel beendet</DialogTitle>
+        <DialogContent>
+          <Typography variant="subtitle1">Sieger:</Typography>
+          <Typography variant="h6" align="center">{winner}</Typography>
+        </DialogContent>
+      </Dialog>
+    </Box>
   );
 }
 
