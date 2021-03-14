@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
-import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles } from '@material-ui/core'
+import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles, Avatar, Tooltip } from '@material-ui/core'
 import { PlayArrow, Refresh } from '@material-ui/icons'
+import { green, orange } from '@material-ui/core/colors';
+import { AvatarGroup } from '@material-ui/lab';
 import moment from 'moment'
 import api, { GAMES_ACTIVE_ENDPOINT } from '../api/api'
 import { isConnected } from '../api/apiSlice'
 import { ActiveGame } from '../game/GameTypes'
+import { getAuth } from '../auth/authSlice';
 
 const useStyles = makeStyles(theme => ({
   refreshButton: {
@@ -17,12 +20,19 @@ const useStyles = makeStyles(theme => ({
   refreshButtonIcon: {
     marginRight: theme.spacing(1),
   },
+  playerAvatar: {
+    backgroundColor: green[500],
+  },
+  playerAvatarActive: {
+    backgroundColor: orange[500],
+  },
 }));
 
 function GameList() {
   
   const classes = useStyles();
   const connected = useSelector(isConnected);
+  const auth = useSelector(getAuth);
   const [activeGames, setActiveGames] = useState<ActiveGame[]>([]);
   const history = useHistory();
 
@@ -46,6 +56,7 @@ function GameList() {
             <TableRow>
               <TableCell>Spiel</TableCell>
               <TableCell>Angelegt</TableCell>
+              <TableCell>Spieler</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -54,6 +65,18 @@ function GameList() {
               <TableRow key={"activeGame"+game.id}>
                 <TableCell>{game.game + " (#" + game.no + ")"}</TableCell>
                 <TableCell>{moment(game.created).format('L')}</TableCell>
+                <TableCell>
+                  <AvatarGroup>
+                    {game.players.map(player => {
+                      const className = (player.id === auth?.uid) ? classes.playerAvatarActive : classes.playerAvatar;
+                      return (
+                        <Tooltip title={player.name} placement="bottom">
+                          <Avatar alt={player.name} className={className}>{player.name.charAt(0)}</Avatar>
+                        </Tooltip>
+                      )
+                    })}
+                  </AvatarGroup>
+                </TableCell>
                 <TableCell>
                   <Box m={-2} pt={-2}>
                     <IconButton edge="end" onClick={(e: React.SyntheticEvent) => {

@@ -12,7 +12,7 @@ export interface ActiveGame {
   created: number;
   game: string;
   stage: string;
-  players: string[];
+  players: Player[];
 }
 
 export interface Player {
