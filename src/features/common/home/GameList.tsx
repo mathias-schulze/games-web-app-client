@@ -80,7 +80,7 @@ function GameList() {
                 </TableCell>
                 <TableCell>
                   <Box m={-2} pt={-2}>
-                    {game.players.filter(player => player.id === auth?.uid).length > 0 &&
+                    {(game.stage === Stage.NEW || game.players.filter(player => player.id === auth?.uid).length > 0) &&
                       <IconButton edge="end" onClick={(e: React.SyntheticEvent) => {
                             e.preventDefault();
                             history.push("/game/" + game.id);
