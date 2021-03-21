@@ -3,20 +3,24 @@ import { store } from '../store/store'
 import { addNotification, NotificationType } from '../home/appSlice'
 
 export const HEALTH_ENDPOINT = 'actuator/health';
+
 export const GAMES_ENDPOINT = 'games';
 export const GAMES_LIST_ENDPOINT = GAMES_ENDPOINT + '/list';
 export const GAMES_PARAM_ENDPOINT = GAMES_ENDPOINT + '/parameter';
 export const GAMES_ACTIVE_ENDPOINT = GAMES_ENDPOINT + '/active';
 export const GAMES_JOIN_ENDPOINT = '/join';
 export const GAMES_START_ENDPOINT = '/start';
+
 export const HERO_REALMS_ENDPOINT = '/hero_realms';
 export const HERO_REALMS_END_TURN_ENDPOINT = '/end_turn';
 export const HERO_REALMS_PLAY_CARD_ENDPOINT = '/play_card';
 export const HERO_REALMS_PLAY_CHAMPION_ENDPOINT = '/play_champion';
+export const HERO_REALMS_MAKE_DECISION_ENDPOINT = '/make_decision';
 export const HERO_REALMS_SACRIFICE_CARD_ENDPOINT = '/sacrifice';
 export const HERO_REALMS_ATTACK_ENDPOINT = '/attack';
 export const HERO_REALMS_BUY_MARKET_CARD_ENDPOINT = '/buy_market_card';
 export const HERO_REALMS_BUY_FIRE_GEM_ENDPOINT = '/buy_fire_gem';
+
 export const PLAYERS_ENDPOINT = 'players';
 
 const instance = axios.create({

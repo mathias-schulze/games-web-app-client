@@ -53,8 +53,26 @@ export interface PlayerArea {
   discardPile: Deck;
   playedCards: Card[];
   champions: Card[];
+  decisions: Decision[];
   factionCountGuild: number;
   factionCountImperial: number;
   factionCountNecros: number;
   factionCountWild: number;
+}
+
+export interface Decision {
+	id: string;
+	type: DecisionType;
+	text: string;
+	options: DecisionOption[];
+}
+
+export enum DecisionType {
+  SELECT_ONE = 'SELECT_ONE',
+	OPTIONAL = 'OPTIONAL',
+}
+
+export interface DecisionOption {
+	id: string;
+	text: string;
 }

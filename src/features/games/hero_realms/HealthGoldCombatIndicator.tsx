@@ -41,6 +41,8 @@ export const useStyles = makeStyles(theme => ({
   },
   health: {
     margin: theme.spacing(1),
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5),
     color: 'black',
     backgroundColor: green[400],
     "&$buttonDisabled": {
@@ -49,6 +51,8 @@ export const useStyles = makeStyles(theme => ({
   },
   killed: {
     margin: theme.spacing(1),
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5),
     color: 'black',
     backgroundColor: grey[400],
     "&$buttonDisabled": {
@@ -57,6 +61,8 @@ export const useStyles = makeStyles(theme => ({
   },
   gold: {
     margin: theme.spacing(1),
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5),
     color: 'black',
     backgroundColor: yellow[600],
     "&$buttonDisabled": {
@@ -65,6 +71,8 @@ export const useStyles = makeStyles(theme => ({
   },
   combat: {
     margin: theme.spacing(1),
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5),
     color: 'black',
     backgroundColor: red[400],
     "&$buttonDisabled": {

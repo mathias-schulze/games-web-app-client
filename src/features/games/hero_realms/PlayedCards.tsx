@@ -1,10 +1,10 @@
 import React from 'react'
-import { Box, makeStyles, Paper } from '@material-ui/core';
-import { PlayerArea } from './HeroRealmsTypes'
+import { Box, Button, ButtonGroup, makeStyles, Paper } from '@material-ui/core';
+import { DecisionType, PlayerArea } from './HeroRealmsTypes'
 import { Card, playerColors } from './HeroRealmsTable';
-import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_SACRIFICE_CARD_ENDPOINT,  } from '../../common/api/api';
+import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_SACRIFICE_CARD_ENDPOINT, HERO_REALMS_MAKE_DECISION_ENDPOINT } from '../../common/api/api';
 
-export const useStyles = makeStyles({
+export const useStyles = makeStyles(theme => ({
   playedCards: {
     display: "flex",
     flexGrow: 1,
@@ -13,7 +13,21 @@ export const useStyles = makeStyles({
   emptyCard: {
     height: "166px",
   },
-});
+  optionalActionsArea: {
+    display: "flex",
+    flexGrow: 0,
+    flexDirection: "column",
+    flexWrap: "wrap",
+    height: "166px"
+  },
+  decisionBox: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(1),
+  },
+  decisionButton: {
+    textTransform: "none",
+  },
+}));
 
 export interface PlayedCardsProps {
   id: string;
@@ -32,6 +46,13 @@ function PlayedCards(props: PlayedCardsProps) {
         .catch(error => {});
   }
 
+  const makeDecision = async (decisionId: string, optionId: string) => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_MAKE_DECISION_ENDPOINT, 
+          {decisionId: decisionId, optionId: optionId})
+        .then()
+        .catch(error => {});
+  }
+
   return (
     <Box className={classes.playedCards} justifyContent={props.justifyContent}
         style={{backgroundColor: playerColors[props.area.position]}}>
@@ -44,6 +65,30 @@ function PlayedCards(props: PlayedCardsProps) {
           <Card key={"playedCard"+card.id} alt={card.name} image={card.image}
               onClick={() => {sacrificeCard(card.id)}} disabled={!sacrifice} ready sacrifice={sacrifice}/>
         )})
+      }
+      {props.area.decisions.length > 0 &&
+        <Box className={classes.decisionBox}>
+          <ButtonGroup orientation="vertical">
+            {props.area.decisions.map(decision => {
+              if (decision.type === DecisionType.SELECT_ONE) {
+                return (
+                  <ButtonGroup>
+                    {decision.options.map(option => {
+                      return <Button key={option.id} className={classes.decisionButton}
+                          onClick={() => {makeDecision(decision.id, option.id)}}>
+                        {option.text}
+                      </Button>
+                    })}
+                  </ButtonGroup>
+                )
+              } else {
+                return (
+                  <Button key={decision.id} className={classes.decisionButton}>{decision.text}</Button>
+                )
+              }
+            })}
+          </ButtonGroup>
+        </Box>
       }
     </Box>
   )
