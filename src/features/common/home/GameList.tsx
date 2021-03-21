@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
-import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles, Avatar, Tooltip } from '@material-ui/core'
+import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles, Avatar, Tooltip, Switch } from '@material-ui/core'
 import { Star, Group, PlayArrow, Refresh } from '@material-ui/icons'
 import { green, orange } from '@material-ui/core/colors';
 import { AvatarGroup } from '@material-ui/lab';
@@ -34,6 +34,7 @@ function GameList() {
   const classes = useStyles();
   const connected = useSelector(isConnected);
   const auth = useSelector(getAuth);
+  const [hideFinished, setHideFinished] = useState(true);
   const [activeGames, setActiveGames] = useState<ActiveGame[]>([]);
   const history = useHistory();
 
@@ -49,6 +50,10 @@ function GameList() {
     }).catch(error => {});
   }
 
+  const handleHideFinishedSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setHideFinished(event.target.checked);
+  };
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -58,11 +63,18 @@ function GameList() {
               <TableCell>Spiel</TableCell>
               <TableCell>Angelegt</TableCell>
               <TableCell>Spieler</TableCell>
-              <TableCell></TableCell>
+              <TableCell>
+                <Switch
+                  checked={hideFinished}
+                  onChange={handleHideFinishedSwitch}
+                  name="hideFinishedSwitch"
+                  color="primary"/>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {activeGames.map((game: ActiveGame) => (
+            {activeGames.filter(game => !hideFinished || game.stage !== Stage.FINISHED)
+                .map((game: ActiveGame) => (
               <TableRow key={"activeGame"+game.id}>
                 <TableCell>{game.game + " (#" + game.no + ")"}</TableCell>
                 <TableCell>{moment(game.created).format('L')}</TableCell>
