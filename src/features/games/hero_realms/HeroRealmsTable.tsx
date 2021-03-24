@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography } from '@material-ui/core';
+import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, IconButton } from '@material-ui/core';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
 import { getAuth } from '../../common/auth/authSlice'
 import { Stage } from '../../common/Const';
@@ -11,6 +11,7 @@ import CommonArea from './CommonArea';
 import OwnArea from './OwnArea';
 import PlayedCards from './PlayedCards';
 import { green, yellow, red, blue } from '@material-ui/core/colors';
+import { DeleteForever } from '@material-ui/icons';
 
 export const playerColors = [blue[100], green[100], red[100], yellow[100]];
 
@@ -32,6 +33,17 @@ export const useStyles = makeStyles(theme => ({
   },
   imageLarge: {
     width: "250px",
+  },
+  sacrificeIcon: {
+    fontSize: "1.2em",
+    color: "black",
+  },
+  sacrificeIconContainer: {
+    backgroundColor: "grey",
+    position: "absolute",
+    top: "40%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
   },
   notReady: {
     opacity: 0.6,
@@ -177,7 +189,8 @@ export interface CardProps {
   alt: string;
   image: string;
   disabled: boolean;
-  ready: boolean,
+  ready: boolean;
+  sacrifice?: boolean;
   onClick: React.MouseEventHandler;
 }
 
@@ -204,6 +217,11 @@ export function Card(props: CardProps) {
           onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}
           className={imageClassName} style={{backgroundColor: "inherit"}}>
         <Button onClick={props.onClick} disabled={props.disabled}>
+          {props.sacrifice &&
+            <IconButton className={classes.sacrificeIconContainer}>
+              <DeleteForever className={classes.sacrificeIcon}/>
+            </IconButton>
+          }
           <img src={"..//"+props.image} alt={props.alt} className={classes.image}/>
         </Button>
       </Paper>

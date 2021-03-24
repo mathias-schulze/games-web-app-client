@@ -24,8 +24,10 @@ function CommonArea(props: HeroRealmsTableViewProps) {
 
   const classes = useStyles();
 
-  const fireGemsCount = props.table.fireGemsDeck.size;
-  const fireGemsImage = (fireGemsCount > 0) ? props.table.fireGemsDeck.cards[0].image : "";
+  const table = props.table;
+  const fireGemsCount = table.fireGemsDeck.size;
+  const fireGemsImage = (fireGemsCount > 0) ? table.fireGemsDeck.cards[0].image : "";
+  const sacrficePileImage = ((table.sacrificePile.size === 0) ? "" : (table.sacrificePile.cards[table.sacrificePile.size-1].image));
 
   const buyFireGem = async () => {
     await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_BUY_FIRE_GEM_ENDPOINT)
@@ -36,11 +38,14 @@ function CommonArea(props: HeroRealmsTableViewProps) {
   return (
     <Box className={classes.commonArea} style={{backgroundColor: grey[400]}}>
       <Deck key="fireGemsDeck" alt="fire gems deck" count={fireGemsCount} counterLeft
-          image={fireGemsImage} emptyImage={props.table.emptyDeck}
-          onClick={() => {buyFireGem()}} disabled={!props.table.ownPlayerArea.active}/>
-      <Market id={props.id} table={props.table}/>
-      <Deck key="marketDeck" alt="market deck" count={props.table.marketDeck.size} 
-          image={props.table.cardBack} emptyImage={props.table.emptyDeck}
+          image={fireGemsImage} emptyImage={table.emptyDeck}
+          onClick={() => {buyFireGem()}} disabled={!table.ownPlayerArea.active}/>
+      <Market id={props.id} table={table}/>
+      <Deck key="marketDeck" alt="market deck" count={table.marketDeck.size} 
+          image={table.cardBack} emptyImage={table.emptyDeck}
+          onClick={() => {}} disabled={true}/>
+      <Deck key="sacrificePile" alt="sacrifice pile" count={table.sacrificePile.size} 
+          image={sacrficePileImage} emptyImage={table.emptyDeck}
           onClick={() => {}} disabled={true}/>
     </Box>
   )

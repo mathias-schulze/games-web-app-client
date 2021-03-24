@@ -35,6 +35,7 @@ export interface Card {
   type: string;
   image: string;
   ready: boolean;
+  sacrifice: boolean;
 }
 
 export interface PlayerArea {

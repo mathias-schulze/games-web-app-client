@@ -13,6 +13,7 @@ export const HERO_REALMS_ENDPOINT = '/hero_realms';
 export const HERO_REALMS_END_TURN_ENDPOINT = '/end_turn';
 export const HERO_REALMS_PLAY_CARD_ENDPOINT = '/play_card';
 export const HERO_REALMS_PLAY_CHAMPION_ENDPOINT = '/play_champion';
+export const HERO_REALMS_SACRIFICE_CARD_ENDPOINT = '/sacrifice';
 export const HERO_REALMS_ATTACK_ENDPOINT = '/attack';
 export const HERO_REALMS_BUY_MARKET_CARD_ENDPOINT = '/buy_market_card';
 export const HERO_REALMS_BUY_FIRE_GEM_ENDPOINT = '/buy_fire_gem';
