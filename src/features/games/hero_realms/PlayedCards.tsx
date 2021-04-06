@@ -46,7 +46,7 @@ function PlayedCards(props: PlayedCardsProps) {
         .catch(error => {});
   }
 
-  const makeDecision = async (decisionId: string, optionId: string) => {
+  const makeDecision = async (decisionId: string, optionId?: string) => {
     await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_MAKE_DECISION_ENDPOINT, 
           {decisionId: decisionId, optionId: optionId})
         .then()
@@ -83,7 +83,10 @@ function PlayedCards(props: PlayedCardsProps) {
                 )
               } else {
                 return (
-                  <Button key={decision.id} className={classes.decisionButton}>{decision.text}</Button>
+                  <Button key={decision.id} className={classes.decisionButton}
+                      onClick={() => {makeDecision(decision.id)}} disabled={!props.own}>
+                    {decision.text}
+                  </Button>
                 )
               }
             })}
