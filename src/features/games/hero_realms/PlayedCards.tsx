@@ -13,18 +13,14 @@ export const useStyles = makeStyles(theme => ({
   emptyCard: {
     height: "166px",
   },
-  optionalActionsArea: {
-    display: "flex",
-    flexGrow: 0,
-    flexDirection: "column",
-    flexWrap: "wrap",
-    height: "166px"
-  },
   decisionBox: {
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(1),
+    display: "flex",
+    flexDirection: "column",
   },
   decisionButton: {
+    marginBottom: theme.spacing(0.5),
     textTransform: "none",
   },
 }));
@@ -68,29 +64,27 @@ function PlayedCards(props: PlayedCardsProps) {
       }
       {props.area.decisions.length > 0 &&
         <Box className={classes.decisionBox}>
-          <ButtonGroup orientation="vertical">
-            {props.area.decisions.map(decision => {
-              if (decision.type === DecisionType.SELECT_ONE) {
-                return (
-                  <ButtonGroup>
-                    {decision.options.map(option => {
-                      return <Button key={option.id} className={classes.decisionButton}
-                          onClick={() => {makeDecision(decision.id, option.id)}} disabled={!props.own}>
-                        {option.text}
-                      </Button>
-                    })}
-                  </ButtonGroup>
-                )
-              } else {
-                return (
-                  <Button key={decision.id} className={classes.decisionButton}
-                      onClick={() => {makeDecision(decision.id)}} disabled={!props.own}>
-                    {decision.text}
-                  </Button>
-                )
-              }
-            })}
-          </ButtonGroup>
+          {props.area.decisions.map(decision => {
+            if (decision.type === DecisionType.SELECT_ONE) {
+              return (
+                <ButtonGroup>
+                  {decision.options.map(option => {
+                    return <Button key={option.id} className={classes.decisionButton}
+                        onClick={() => {makeDecision(decision.id, option.id)}} disabled={!props.own}>
+                      {option.text}
+                    </Button>
+                  })}
+                </ButtonGroup>
+              )
+            } else {
+              return (
+                <Button key={decision.id} className={classes.decisionButton} variant="outlined"
+                    onClick={() => {makeDecision(decision.id)}} disabled={!props.own}>
+                  {decision.text}
+                </Button>
+              )
+            }
+          })}
         </Box>
       }
     </Box>
