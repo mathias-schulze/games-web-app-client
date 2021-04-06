@@ -75,7 +75,7 @@ function PlayedCards(props: PlayedCardsProps) {
                   <ButtonGroup>
                     {decision.options.map(option => {
                       return <Button key={option.id} className={classes.decisionButton}
-                          onClick={() => {makeDecision(decision.id, option.id)}}>
+                          onClick={() => {makeDecision(decision.id, option.id)}} disabled={!props.own}>
                         {option.text}
                       </Button>
                     })}
