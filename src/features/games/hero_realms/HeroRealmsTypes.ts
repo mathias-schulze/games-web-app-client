@@ -42,6 +42,7 @@ export interface PlayerArea {
   playerId: string;
   playerName: string;
   active: boolean;
+  actionMode: SpecialActionMode;
   killed: boolean;
 	position: number;
   health: number;
@@ -58,6 +59,10 @@ export interface PlayerArea {
   factionCountImperial: number;
   factionCountNecros: number;
   factionCountWild: number;
+}
+
+export enum SpecialActionMode {
+  DISCARD = 'DISCARD',
 }
 
 export interface Decision {
