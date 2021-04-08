@@ -62,7 +62,7 @@ function PlayedCards(props: PlayedCardsProps) {
               onClick={() => {sacrificeCard(card.id)}} disabled={!sacrifice} ready sacrifice={sacrifice}/>
         )})
       }
-      {props.area.decisions.length > 0 &&
+      {props.area.decisions?.length > 0 &&
         <Box className={classes.decisionBox}>
           {props.area.decisions.map(decision => {
             if (decision.type === DecisionType.SELECT_ONE) {
