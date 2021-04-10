@@ -1,7 +1,13 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Fab, Box, makeStyles, Dialog, DialogTitle, DialogContent } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
-import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_END_TURN_ENDPOINT, HERO_REALMS_PLAY_CARD_ENDPOINT, HERO_REALMS_DISCARD_CARD_ENDPOINT } from '../../common/api/api';
+import api, { 
+  HERO_REALMS_ENDPOINT,
+  HERO_REALMS_END_TURN_ENDPOINT,
+  HERO_REALMS_PLAY_CARD_ENDPOINT,
+  HERO_REALMS_DISCARD_CARD_ENDPOINT,
+  HERO_REALMS_SACRIFICE_CARD_ENDPOINT
+} from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, PlayerDeckAndDiscard, playerColors } from './HeroRealmsTable';
 import { HeroRealmsTableView, PlayerArea, SpecialActionMode } from './HeroRealmsTypes';
@@ -25,6 +31,11 @@ export const useStyles = makeStyles(theme => ({
     display: "flex",
     flexGrow: 1,
     justifyContent: "center",
+  },
+  selectCardDialog: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
   },
   endTurnButton: {
     position: 'fixed',
@@ -62,6 +73,9 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.DISCARD && 
         <DiscardCardDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.SACRIFICE && 
+        <SacrificeHandOrDiscardDialog {...props}/>
       }
       <Box className={classes.cards}>
         <PlayedChampions id={props.id} area={area} justifyContent="flex-start" own/>
@@ -103,6 +117,38 @@ export function DiscardCardDialog(props: OwnAreaProps) {
             return (
               <Card key={"handCard"+handCard.id} alt={handCard.name} image={handCard.image}
                   onClick={() => {discardCard(handCard.id)}} disabled={selected} ready/>
+            )})
+          }
+        </Box>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function SacrificeHandOrDiscardDialog(props: OwnAreaProps) {
+  
+  const classes = useStyles();
+  const [selected, setSelected] = useState<boolean>(false);
+
+  const sacrificeCard = async (id: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_SACRIFICE_CARD_ENDPOINT, 
+          {cardId: id, withAbility: false})
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle eine Karte zum opfern
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.selectCardDialog}>
+          {props.area.hand.concat(props.area.discardPile.cards).map(card => {
+            return (
+              <Card key={"sacrificeCard"+card.id} alt={card.name} image={card.image}
+                  onClick={() => {sacrificeCard(card.id)}} disabled={selected} ready/>
             )})
           }
         </Box>

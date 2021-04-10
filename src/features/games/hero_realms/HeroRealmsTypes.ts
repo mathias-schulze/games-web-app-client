@@ -63,6 +63,7 @@ export interface PlayerArea {
 
 export enum SpecialActionMode {
   DISCARD = 'DISCARD',
+  SACRIFICE = 'SACRIFICE',
 }
 
 export interface Decision {

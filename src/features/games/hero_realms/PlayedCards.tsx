@@ -37,7 +37,8 @@ function PlayedCards(props: PlayedCardsProps) {
   const classes = useStyles();
 
   const sacrificeCard = async (id: string) => {
-    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_SACRIFICE_CARD_ENDPOINT, {cardId: id})
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_SACRIFICE_CARD_ENDPOINT, 
+          {cardId: id, withAbility: true})
         .then()
         .catch(error => {});
   }
