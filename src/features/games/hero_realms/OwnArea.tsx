@@ -8,11 +8,12 @@ import api, {
   HERO_REALMS_DISCARD_CARD_ENDPOINT,
   HERO_REALMS_PREPARE_CHAMPION_ENDPOINT,
   HERO_REALMS_STUN_TARGET_CHAMPION_ENDPOINT,
+  HERO_REALMS_PUT_CARD_TOP_DECK_ENDPOINT,
   HERO_REALMS_SACRIFICE_CARD_ENDPOINT
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, PlayerDeckAndDiscard, playerColors } from './HeroRealmsTable';
-import { HeroRealmsTableView, PlayerArea, SpecialActionMode } from './HeroRealmsTypes';
+import { HeroRealmsTableView, PlayerArea, SpecialActionMode, CardType } from './HeroRealmsTypes';
 import PlayedCards from './PlayedCards';
 import PlayedChampions from './PlayedChampions';
 
@@ -90,6 +91,12 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.STUN_TARGET_CHAMPION && 
         <StunTargetChampionDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.PUT_CARD_DISCARD_PILE_TOP_DECK && 
+        <PutCardTopDeckDialog {...props} onlyChampion={false}/>
+      }
+      {area.actionMode === SpecialActionMode.PUT_CHAMPION_DISCARD_PILE_TOP_DECK && 
+        <PutCardTopDeckDialog {...props} onlyChampion/>
       }
       {area.actionMode === SpecialActionMode.SACRIFICE && 
         <SacrificeHandOrDiscardDialog {...props}/>
@@ -209,6 +216,47 @@ export function StunTargetChampionDialog(props: OwnAreaProps) {
               </Fragment>
             )
           })}
+        </Box>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export interface PutCardTopDeckProps {
+  id: string;
+  table: HeroRealmsTableView;
+  area: PlayerArea;
+  onlyChampion: boolean;
+}
+
+export function PutCardTopDeckDialog(props: PutCardTopDeckProps) {
+  
+  const classes = useStyles();
+  const [selected, setSelected] = useState<boolean>(false);
+
+  const putCardTopDeck = async (id: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_PUT_CARD_TOP_DECK_ENDPOINT, 
+          {cardId: id, withAbility: false})
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle eine Karte um sie auf den Nachzugstapel zu legen
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.selectCardDialog}>
+          {props.area.discardPile.cards
+            .filter(card => !props.onlyChampion || card.type === CardType.CHAMPION || card.type === CardType.GUARD)
+            .map(card => {
+              return (
+                <Card key={"discardCard"+card.id} alt={card.name} image={card.image}
+                    onClick={() => {putCardTopDeck(card.id)}} disabled={selected} ready/>
+              )})
+          }
         </Box>
       </DialogContent>
     </Dialog>

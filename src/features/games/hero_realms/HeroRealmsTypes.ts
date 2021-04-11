@@ -38,6 +38,13 @@ export interface Card {
   sacrifice: boolean;
 }
 
+export enum CardType {
+  ITEM = 'ITEM',
+	ACTION = 'ACTION',
+	CHAMPION = 'CHAMPION',
+	GUARD = 'GUARD',
+}
+
 export interface PlayerArea {
   playerId: string;
   playerName: string;
@@ -65,6 +72,8 @@ export enum SpecialActionMode {
   DISCARD = 'DISCARD',
   PREPARE_CHAMPION = 'PREPARE_CHAMPION',
   STUN_TARGET_CHAMPION = 'STUN_TARGET_CHAMPION',
+  PUT_CARD_DISCARD_PILE_TOP_DECK = 'PUT_CARD_DISCARD_PILE_TOP_DECK',
+  PUT_CHAMPION_DISCARD_PILE_TOP_DECK = 'PUT_CHAMPION_DISCARD_PILE_TOP_DECK',
   SACRIFICE = 'SACRIFICE',
 }
 

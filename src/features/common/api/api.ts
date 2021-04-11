@@ -20,6 +20,7 @@ export const HERO_REALMS_SACRIFICE_CARD_ENDPOINT = '/sacrifice';
 export const HERO_REALMS_DISCARD_CARD_ENDPOINT = '/discard';
 export const HERO_REALMS_PREPARE_CHAMPION_ENDPOINT = '/prepare_champion';
 export const HERO_REALMS_STUN_TARGET_CHAMPION_ENDPOINT = '/stun_target_champion';
+export const HERO_REALMS_PUT_CARD_TOP_DECK_ENDPOINT = '/put_card_top_deck';
 export const HERO_REALMS_ATTACK_ENDPOINT = '/attack';
 export const HERO_REALMS_BUY_MARKET_CARD_ENDPOINT = '/buy_market_card';
 export const HERO_REALMS_BUY_FIRE_GEM_ENDPOINT = '/buy_fire_gem';
