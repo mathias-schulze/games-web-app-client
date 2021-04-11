@@ -64,6 +64,7 @@ export interface PlayerArea {
 export enum SpecialActionMode {
   DISCARD = 'DISCARD',
   PREPARE_CHAMPION = 'PREPARE_CHAMPION',
+  STUN_TARGET_CHAMPION = 'STUN_TARGET_CHAMPION',
   SACRIFICE = 'SACRIFICE',
 }
 

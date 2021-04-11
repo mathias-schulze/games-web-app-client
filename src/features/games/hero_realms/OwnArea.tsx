@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Fab, Box, makeStyles, Dialog, DialogTitle, DialogContent } from '@material-ui/core';
+import { Fab, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
 import api, { 
   HERO_REALMS_ENDPOINT,
@@ -7,6 +7,7 @@ import api, {
   HERO_REALMS_PLAY_CARD_ENDPOINT,
   HERO_REALMS_DISCARD_CARD_ENDPOINT,
   HERO_REALMS_PREPARE_CHAMPION_ENDPOINT,
+  HERO_REALMS_STUN_TARGET_CHAMPION_ENDPOINT,
   HERO_REALMS_SACRIFICE_CARD_ENDPOINT
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
@@ -37,6 +38,15 @@ export const useStyles = makeStyles(theme => ({
     display: "flex",
     justifyContent: "center",
     flexWrap: "wrap",
+  },
+  stunChampionPlayerBox: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "column",
+  },
+  stunChampionChampionsBox: {
+    display: "flex",
+    justifyContent: "center",
   },
   endTurnButton: {
     position: 'fixed',
@@ -77,6 +87,9 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.PREPARE_CHAMPION && 
         <PrepareChampionDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.STUN_TARGET_CHAMPION && 
+        <StunTargetChampionDialog {...props}/>
       }
       {area.actionMode === SpecialActionMode.SACRIFICE && 
         <SacrificeHandOrDiscardDialog {...props}/>
@@ -155,6 +168,47 @@ export function PrepareChampionDialog(props: OwnAreaProps) {
                     onClick={() => {prepareChampion(champion.id)}} disabled={selected} ready/>
               )})
           }
+        </Box>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function StunTargetChampionDialog(props: OwnAreaProps) {
+  
+  const classes = useStyles();
+  const [selected, setSelected] = useState<boolean>(false);
+
+  const stunTargetChampion = async (playerId: string, championId: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_STUN_TARGET_CHAMPION_ENDPOINT, 
+          {playerId: playerId, championId: championId})
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle einen Champion
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.stunChampionPlayerBox}>
+          {props.table.otherPlayerAreas.map(area => {
+            return (
+              <Fragment>
+                <Typography variant="subtitle1">{area.playerName}</Typography>
+                <Box className={classes.stunChampionChampionsBox}>
+                  {area.champions.map(champion => {
+                    return (
+                      <Card key={"championCard"+champion.id} alt={champion.name} image={champion.image}
+                          onClick={() => {stunTargetChampion(area.playerId, champion.id)}} disabled={selected} ready/>
+                    )})
+                  }
+                </Box>
+              </Fragment>
+            )
+          })}
         </Box>
       </DialogContent>
     </Dialog>
