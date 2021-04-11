@@ -6,6 +6,7 @@ import api, {
   HERO_REALMS_END_TURN_ENDPOINT,
   HERO_REALMS_PLAY_CARD_ENDPOINT,
   HERO_REALMS_DISCARD_CARD_ENDPOINT,
+  HERO_REALMS_PREPARE_CHAMPION_ENDPOINT,
   HERO_REALMS_SACRIFICE_CARD_ENDPOINT
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
@@ -74,6 +75,9 @@ function OwnArea(props: OwnAreaProps) {
       {area.actionMode === SpecialActionMode.DISCARD && 
         <DiscardCardDialog {...props}/>
       }
+      {area.actionMode === SpecialActionMode.PREPARE_CHAMPION && 
+        <PrepareChampionDialog {...props}/>
+      }
       {area.actionMode === SpecialActionMode.SACRIFICE && 
         <SacrificeHandOrDiscardDialog {...props}/>
       }
@@ -118,6 +122,38 @@ export function DiscardCardDialog(props: OwnAreaProps) {
               <Card key={"handCard"+handCard.id} alt={handCard.name} image={handCard.image}
                   onClick={() => {discardCard(handCard.id)}} disabled={selected} ready/>
             )})
+          }
+        </Box>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function PrepareChampionDialog(props: OwnAreaProps) {
+  
+  const classes = useStyles();
+  const [selected, setSelected] = useState<boolean>(false);
+
+  const prepareChampion = async (id: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_PREPARE_CHAMPION_ENDPOINT, {cardId: id})
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle einen Champion
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.hand}>
+          {props.area.champions.filter(champion => !champion.ready)
+            .map(champion => {
+              return (
+                <Card key={"championCard"+champion.id} alt={champion.name} image={champion.image}
+                    onClick={() => {prepareChampion(champion.id)}} disabled={selected} ready/>
+              )})
           }
         </Box>
       </DialogContent>
