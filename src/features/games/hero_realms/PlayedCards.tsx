@@ -3,6 +3,8 @@ import { Box, Button, ButtonGroup, makeStyles, Paper } from '@material-ui/core';
 import { DecisionType, PlayerArea } from './HeroRealmsTypes'
 import { Card, playerColors } from './HeroRealmsTable';
 import api, { HERO_REALMS_ENDPOINT, HERO_REALMS_SACRIFICE_CARD_ENDPOINT, HERO_REALMS_MAKE_DECISION_ENDPOINT } from '../../common/api/api';
+import { green } from '@material-ui/core/colors';
+import clsx from 'clsx';
 
 export const useStyles = makeStyles(theme => ({
   playedCards: {
@@ -22,6 +24,10 @@ export const useStyles = makeStyles(theme => ({
   decisionButton: {
     marginBottom: theme.spacing(0.5),
     textTransform: "none",
+  },
+  decisionButtonActive: {
+    fontWeight: "bold",
+    color: green[700],
   },
 }));
 
@@ -52,7 +58,7 @@ function PlayedCards(props: PlayedCardsProps) {
 
   return (
     <Box className={classes.playedCards} justifyContent={props.justifyContent}
-        style={{backgroundColor: playerColors[props.area.position]}}>
+    style={{backgroundColor: playerColors[props.area.position]}}>
       {props.area.playedCards.length === 0 &&
         <Paper className={classes.emptyCard}/>
       }
@@ -60,9 +66,9 @@ function PlayedCards(props: PlayedCardsProps) {
         const sacrifice = (props.own && card.sacrifice);
         return (
           <Card key={"playedCard"+card.id} alt={card.name} image={card.image}
-              onClick={() => {sacrificeCard(card.id)}} disabled={!sacrifice} ready sacrifice={sacrifice}/>
-        )})
-      }
+          onClick={() => {sacrificeCard(card.id)}} disabled={!sacrifice} ready sacrifice={sacrifice}/>
+          )})
+        }
       {props.area.decisions?.length > 0 &&
         <Box className={classes.decisionBox}>
           {props.area.decisions.map(decision => {
@@ -71,15 +77,18 @@ function PlayedCards(props: PlayedCardsProps) {
                 <ButtonGroup>
                   {decision.options.map(option => {
                     return <Button key={option.id} className={classes.decisionButton}
-                        onClick={() => {makeDecision(decision.id, option.id)}} disabled={!props.own}>
+                    onClick={() => {makeDecision(decision.id, option.id)}} disabled={!props.own}>
                       {option.text}
                     </Button>
                   })}
                 </ButtonGroup>
               )
             } else {
+              const classNameDecisionButton = decision.active ? 
+                  clsx(classes.decisionButton, classes.decisionButtonActive) : classes.decisionButton;
+            
               return (
-                <Button key={decision.id} className={classes.decisionButton} variant="outlined"
+                <Button key={decision.id} className={classNameDecisionButton} variant="outlined"
                     onClick={() => {makeDecision(decision.id)}} disabled={!props.own}>
                   {decision.text}
                 </Button>

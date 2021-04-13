@@ -81,6 +81,7 @@ export interface Decision {
 	id: string;
 	type: DecisionType;
 	text: string;
+  active: boolean;
 	options: DecisionOption[];
 }
 
