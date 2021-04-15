@@ -50,6 +50,7 @@ export interface PlayerArea {
   playerName: string;
   active: boolean;
   actionMode: SpecialActionMode;
+  selected4Discard: boolean;
   killed: boolean;
 	position: number;
   health: number;
@@ -70,6 +71,7 @@ export interface PlayerArea {
 
 export enum SpecialActionMode {
   DISCARD = 'DISCARD',
+  OPPONENT_DISCARD_CARD = 'OPPONENT_DISCARD_CARD',
   PREPARE_CHAMPION = 'PREPARE_CHAMPION',
   STUN_TARGET_CHAMPION = 'STUN_TARGET_CHAMPION',
   PUT_CARD_DISCARD_PILE_TOP_DECK = 'PUT_CARD_DISCARD_PILE_TOP_DECK',

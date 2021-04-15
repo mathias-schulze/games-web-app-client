@@ -6,16 +6,18 @@ import api, {
   HERO_REALMS_END_TURN_ENDPOINT,
   HERO_REALMS_PLAY_CARD_ENDPOINT,
   HERO_REALMS_DISCARD_CARD_ENDPOINT,
+  HERO_REALMS_SELECT_PLAYER_FOR_DISCARD_CARD_ENDPOINT,
   HERO_REALMS_PREPARE_CHAMPION_ENDPOINT,
   HERO_REALMS_STUN_TARGET_CHAMPION_ENDPOINT,
   HERO_REALMS_PUT_CARD_TOP_DECK_ENDPOINT,
   HERO_REALMS_SACRIFICE_CARD_ENDPOINT
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
-import { Card, PlayerDeckAndDiscard, playerColors } from './HeroRealmsTable';
+import { Card, PlayerDeckAndDiscard, playerColors, Deck } from './HeroRealmsTable';
 import { HeroRealmsTableView, PlayerArea, SpecialActionMode, CardType } from './HeroRealmsTypes';
 import PlayedCards from './PlayedCards';
 import PlayedChampions from './PlayedChampions';
+import { red } from '@material-ui/core/colors';
 
 export const useStyles = makeStyles(theme => ({
   ownArea: {
@@ -33,6 +35,23 @@ export const useStyles = makeStyles(theme => ({
   hand: {
     display: "flex",
     flexGrow: 1,
+    justifyContent: "center",
+  },
+  selectOpponentDeckContainer: {
+    display: "flex",
+    flexGrow: 1,
+  },
+  selectOpponentDeckBox: {
+    flexGrow: 1,
+    textAlign: "center",
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  selectOpponentDeckBoxSelected: {
+    flexGrow: 1,
+    textAlign: "center",
+    background: red[200],
+    flexDirection: "column",
     justifyContent: "center",
   },
   selectCardDialog: {
@@ -85,6 +104,9 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.DISCARD && 
         <DiscardCardDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.OPPONENT_DISCARD_CARD && 
+        <OpponentDiscardCardDialog {...props}/>
       }
       {area.actionMode === SpecialActionMode.PREPARE_CHAMPION && 
         <PrepareChampionDialog {...props}/>
@@ -143,6 +165,41 @@ export function DiscardCardDialog(props: OwnAreaProps) {
                   onClick={() => {discardCard(handCard.id)}} disabled={selected} ready/>
             )})
           }
+        </Box>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function OpponentDiscardCardDialog(props: OwnAreaProps) {
+  
+  const classes = useStyles();
+  const [selected, setSelected] = useState<boolean>(props.table.otherPlayerAreas.filter(area => area.selected4Discard).length > 0);
+
+  const selectPlayer4DiscardCard = async (id: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_SELECT_PLAYER_FOR_DISCARD_CARD_ENDPOINT, {playerId: id})
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle den Spieler der eine Karte abwerfen muss
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.selectOpponentDeckContainer}>
+          {props.table.otherPlayerAreas.map(otherArea => {
+            const className = otherArea.selected4Discard ? classes.selectOpponentDeckBoxSelected : classes.selectOpponentDeckBox;
+            return (
+              <Box className={className}>
+                  <Typography variant="h6">{otherArea.playerName}</Typography>
+                  <Deck alt={otherArea.playerName + " deck"} count={otherArea.handSize} 
+                    image={props.table.cardBack} emptyImage={props.table.emptyDeck}
+                    onClick={() => {selectPlayer4DiscardCard(otherArea.playerId)}} disabled={selected}/>
+              </Box>
+          )})}
         </Box>
       </DialogContent>
     </Dialog>
