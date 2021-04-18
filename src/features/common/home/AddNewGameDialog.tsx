@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
   newGameButtonIcon: {
     marginRight: theme.spacing(1),
   },
+  selectGameImage: {
+    height: "300px",
+  },
 }));
 
 export function AddNewGameDialog() {
@@ -44,7 +47,7 @@ export function AddNewGameDialog() {
         <DialogContent>
           {games.map(game => {
             return <Button onClick={() => createNewGame(game)} key={"select" + game.id + "Button"}>
-              <img src={game.image} alt={game.name}/>
+              <img src={game.image} alt={game.name} className={classes.selectGameImage}/>
             </Button>
           })}
         </DialogContent>
