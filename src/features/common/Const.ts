@@ -6,4 +6,5 @@ export enum Stage {
 
 export enum GameType {
   HERO_REALMS = 'HERO_REALMS',
+  HERO_REALMS_CHARACTER_PACKS = 'HERO_REALMS_CHARACTER_PACKS',
 }
