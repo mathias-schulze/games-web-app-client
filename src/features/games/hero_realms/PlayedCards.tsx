@@ -13,7 +13,7 @@ export const useStyles = makeStyles(theme => ({
     width: "100%",
   },
   emptyCard: {
-    height: "166px",
+    height: "135px",
   },
   decisionBox: {
     marginLeft: theme.spacing(2),

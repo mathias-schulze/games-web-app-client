@@ -11,7 +11,7 @@ export const useStyles = makeStyles(theme => ({
     display: "flex",
     flexGrow: 1,
     justifyContent: "center",
-    padding: theme.spacing(2),
+    padding: theme.spacing(1.5),
   },
   market: {
     display: "flex",

@@ -48,6 +48,9 @@ export enum CardType {
 export interface PlayerArea {
   playerId: string;
   playerName: string;
+  characterRoundAbilityActive?: boolean;
+  characterRoundAbilityImage?: string;
+  characterOneTimeAbilityImage?: string;
   active: boolean;
   actionMode: SpecialActionMode;
   selected4Discard: boolean;

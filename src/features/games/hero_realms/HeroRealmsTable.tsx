@@ -29,7 +29,7 @@ export const useStyles = makeStyles(theme => ({
     width: "100%",
   },
   image: {
-    width: "110px",
+    width: "90px",
   },
   imageLarge: {
     width: "250px",
@@ -52,21 +52,21 @@ export const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.dark,
     position: "absolute",
-    right: "20px",
-    top: "20px",
+    right: "18px",
+    top: "18px",
     width: theme.spacing(3),
     height: theme.spacing(3),
-    fontSize: 12,
+    fontSize: 11,
   },
   deckCountLeft: {
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.dark,
     position: "absolute",
-    left: "20px",
-    top: "20px",
+    left: "18px",
+    top: "18px",
     width: theme.spacing(3),
     height: theme.spacing(3),
-    fontSize: 12,
+    fontSize: 11,
   },
   popover: {
     pointerEvents: 'none',
@@ -78,6 +78,9 @@ export const useStyles = makeStyles(theme => ({
   },
   backdrop: {
     position: 'absolute',
+  },
+  playDecksAndCardsBox: {
+    display: "flex",
   },
 }));
 
@@ -235,19 +238,24 @@ export function Card(props: CardProps) {
   )
 }
 
-export interface PlayerDeckAndDiscardProps {
+export interface PlayerDecksAndCardsProps {
   table: HeroRealmsTableView;
   area: PlayerArea;
+  own?: boolean;
 }
 
-export function PlayerDeckAndDiscard(props: PlayerDeckAndDiscardProps) {
+export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
+
+  const classes = useStyles();
 
   const table = props.table;
   const area = props.area;
   const discardPileImage = ((area.discardPile.size === 0) ? table.emptyDeck : (area.discardPile.cards[area.discardPile.size-1].image));
+  const roundAbilityActive = area.characterRoundAbilityActive != null && area.characterRoundAbilityActive;
+  const disabled = !area.active || !props.own;
 
   return (
-    <Box>
+    <Box className={classes.playDecksAndCardsBox}>
       <Deck alt="deck" count={area.deck.size} 
           image={table.cardBack} emptyImage={table.emptyDeck}
           onClick={() => {}} disabled={true}/>
@@ -255,6 +263,14 @@ export function PlayerDeckAndDiscard(props: PlayerDeckAndDiscardProps) {
       <Deck alt="discard pile" count={area.discardPile.size} 
           image={discardPileImage} emptyImage={table.emptyDeck}
           onClick={() => {}} disabled={true}/>
+      {area.characterRoundAbilityImage &&
+        <Card key={"roundAbility"} alt="round ability" image={area.characterRoundAbilityImage}
+                  onClick={() => {}} disabled={disabled || !roundAbilityActive} ready={roundAbilityActive}/>
+      }
+      {area.characterOneTimeAbilityImage &&
+        <Card key={"oneTimeAbility"} alt="one time ability" image={area.characterOneTimeAbilityImage}
+                  onClick={() => {}} disabled={disabled} ready/>
+      }
     </Box>
   )
 }

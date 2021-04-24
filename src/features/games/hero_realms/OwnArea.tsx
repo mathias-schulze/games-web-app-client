@@ -13,7 +13,7 @@ import api, {
   HERO_REALMS_SACRIFICE_CARD_ENDPOINT
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
-import { Card, PlayerDeckAndDiscard, playerColors, Deck } from './HeroRealmsTable';
+import { Card, PlayerDecksAndCards, playerColors, Deck } from './HeroRealmsTable';
 import { HeroRealmsTableView, PlayerArea, SpecialActionMode, CardType } from './HeroRealmsTypes';
 import PlayedCards from './PlayedCards';
 import PlayedChampions from './PlayedChampions';
@@ -70,7 +70,7 @@ export const useStyles = makeStyles(theme => ({
   },
   endTurnButton: {
     position: 'fixed',
-    bottom: theme.spacing(2),
+    bottom: theme.spacing(23),
     right: theme.spacing(2),
   },
   endTurnButtonIcon: {
@@ -133,7 +133,7 @@ function OwnArea(props: OwnAreaProps) {
             )})
           }
         </Box>
-        <PlayerDeckAndDiscard table={props.table} area={area}/>
+        <PlayerDecksAndCards {...props} own/>
       </Box>
       <EndTurnButton id={props.id} area={area}/>
     </Box>
