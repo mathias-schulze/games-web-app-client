@@ -12,7 +12,11 @@ import OwnArea from './OwnArea';
 import PlayedCards from './PlayedCards';
 import { green, yellow, red, blue } from '@material-ui/core/colors';
 import { DeleteForever } from '@material-ui/icons';
-
+import api, { 
+  HERO_REALMS_ENDPOINT,
+  HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT,
+  HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT
+} from '../../common/api/api';
 export const playerColors = [blue[100], green[100], red[100], yellow[100]];
 
 export const useStyles = makeStyles(theme => ({
@@ -239,6 +243,7 @@ export function Card(props: CardProps) {
 }
 
 export interface PlayerDecksAndCardsProps {
+  id: string;
   table: HeroRealmsTableView;
   area: PlayerArea;
   own?: boolean;
@@ -251,8 +256,21 @@ export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
   const table = props.table;
   const area = props.area;
   const discardPileImage = ((area.discardPile.size === 0) ? table.emptyDeck : (area.discardPile.cards[area.discardPile.size-1].image));
-  const roundAbilityActive = area.characterRoundAbilityActive != null && area.characterRoundAbilityActive;
-  const disabled = !area.active || !props.own;
+  const roundAbilityReady = area.characterRoundAbilityActive != null && area.characterRoundAbilityActive;
+  const roundAbilityDisabled = !area.active || !props.own || !roundAbilityReady;
+  const oneTimeAbilityDisabled = !area.active || !props.own;
+
+  const processCharacterRoundAbilities = async () => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT)
+        .then()
+        .catch(error => {});
+  }
+
+  const processCharacterOneTimeAbilities = async () => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT)
+        .then()
+        .catch(error => {});
+  }
 
   return (
     <Box className={classes.playDecksAndCardsBox}>
@@ -265,11 +283,11 @@ export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
           onClick={() => {}} disabled={true}/>
       {area.characterRoundAbilityImage &&
         <Card key={"roundAbility"} alt="round ability" image={area.characterRoundAbilityImage}
-                  onClick={() => {}} disabled={disabled || !roundAbilityActive} ready={roundAbilityActive}/>
+                  onClick={() => {processCharacterRoundAbilities()}} disabled={roundAbilityDisabled} ready={roundAbilityReady}/>
       }
       {area.characterOneTimeAbilityImage &&
         <Card key={"oneTimeAbility"} alt="one time ability" image={area.characterOneTimeAbilityImage}
-                  onClick={() => {}} disabled={disabled} ready/>
+                  onClick={() => {processCharacterOneTimeAbilities()}} disabled={oneTimeAbilityDisabled} ready/>
       }
     </Box>
   )
