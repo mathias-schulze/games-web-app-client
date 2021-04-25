@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Fab, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography } from '@material-ui/core';
+import { Fab, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, Button } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
 import api, { 
   HERO_REALMS_ENDPOINT,
@@ -10,7 +10,8 @@ import api, {
   HERO_REALMS_PREPARE_CHAMPION_ENDPOINT,
   HERO_REALMS_STUN_TARGET_CHAMPION_ENDPOINT,
   HERO_REALMS_PUT_CARD_TOP_DECK_ENDPOINT,
-  HERO_REALMS_SACRIFICE_CARD_ENDPOINT
+  HERO_REALMS_SACRIFICE_CARD_ENDPOINT,
+  HERO_REALMS_SELECT_PLAYER_FOR_BLESS_ENDPOINT,
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, PlayerDecksAndCards, playerColors, Deck } from './HeroRealmsTable';
@@ -68,6 +69,17 @@ export const useStyles = makeStyles(theme => ({
     display: "flex",
     justifyContent: "center",
   },
+  selectBlessContainer: {
+    flexGrow: 1,
+    textAlign: "center",
+    flexDirection: "column",
+  },
+  selectBlessChampionsContainer: {
+    display: "flex",
+    justifyContent: "center",
+    height: "135px",
+    marginBottom: theme.spacing(2),
+  },
   endTurnButton: {
     position: 'fixed',
     bottom: theme.spacing(23),
@@ -122,6 +134,9 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.SACRIFICE && 
         <SacrificeHandOrDiscardDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.CLERIC_BLESS && 
+        <ClericBlessDialog {...props}/>
       }
       <Box className={classes.cards}>
         <PlayedChampions id={props.id} area={area} justifyContent="flex-start" own/>
@@ -346,6 +361,50 @@ export function SacrificeHandOrDiscardDialog(props: OwnAreaProps) {
                   onClick={() => {sacrificeCard(card.id)}} disabled={selected} ready/>
             )})
           }
+        </Box>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function ClericBlessDialog(props: OwnAreaProps) {
+  
+  const classes = useStyles();
+  const [selected, setSelected] = useState<boolean>(false);
+  const allAreas = [...props.table.otherPlayerAreas];
+  allAreas.push(props.area);
+
+  const selectPlayer4Bless = async (id: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_SELECT_PLAYER_FOR_BLESS_ENDPOINT, {playerId: id})
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle einen Spieler um ihn zu segnen
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.selectBlessContainer}>
+          {allAreas.map(area => {
+            return (
+              <Box>
+                  <Button variant="contained" color="primary"
+                      onClick={() => {selectPlayer4Bless(area.playerId)}} disabled={selected}>
+                    {area.playerName}
+                  </Button>
+                  <Box className={classes.selectBlessChampionsContainer}>
+                    {area.champions.map(champion => {
+                      return (
+                        <Card key={"championCard"+champion.id} alt={champion.name} image={champion.image}
+                            onClick={() => {}} disabled={true} ready/>
+                      )})
+                    }
+                  </Box>
+              </Box>
+          )})}
         </Box>
       </DialogContent>
     </Dialog>

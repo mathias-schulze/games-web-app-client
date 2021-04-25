@@ -27,6 +27,7 @@ export const HERO_REALMS_BUY_MARKET_CARD_ENDPOINT = '/buy_market_card';
 export const HERO_REALMS_BUY_FIRE_GEM_ENDPOINT = '/buy_fire_gem';
 export const HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT = '/process_character_round_abilities';
 export const HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT = '/process_character_one_time_abilities';
+export const HERO_REALMS_SELECT_PLAYER_FOR_BLESS_ENDPOINT = '/select_player_for_bless';
 
 export const PLAYERS_ENDPOINT = 'players';
 
