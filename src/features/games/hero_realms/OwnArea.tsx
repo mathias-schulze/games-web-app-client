@@ -12,6 +12,7 @@ import api, {
   HERO_REALMS_PUT_CARD_TOP_DECK_ENDPOINT,
   HERO_REALMS_SACRIFICE_CARD_ENDPOINT,
   HERO_REALMS_SELECT_PLAYER_FOR_BLESS_ENDPOINT,
+  HERO_REALMS_PUT_CHAMPION_DISCARD_INTO_PLAY_ENDPOINT,
   HERO_REALMS_RANGER_TRACK_DISCARD_ENDPOINT,
   HERO_REALMS_RANGER_TRACK_UP_ENDPOINT,
   HERO_REALMS_RANGER_TRACK_DOWN_ENDPOINT,
@@ -151,6 +152,9 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.CLERIC_BLESS && 
         <ClericBlessDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.PUT_CHAMPION_DISCARD_INTO_PLAY && 
+        <PutChampionDiscardIntoPlayDialog {...props}/>
       }
       {area.actionMode === SpecialActionMode.RANGER_TRACK && 
         <RangerTrackDialog {...props}/>
@@ -422,6 +426,38 @@ export function ClericBlessDialog(props: OwnAreaProps) {
                   </Box>
               </Box>
           )})}
+        </Box>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function PutChampionDiscardIntoPlayDialog(props: OwnAreaProps) {
+  
+  const classes = useStyles();
+  const [selected, setSelected] = useState<boolean>(false);
+
+  const putChampionIntoPlay = async (id: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_PUT_CHAMPION_DISCARD_INTO_PLAY_ENDPOINT, {cardId: id})
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle einen Champion
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.hand}>
+          {props.area.discardPile.cards.filter(champion => champion.stunnedSinceLastTurn)
+            .map(champion => {
+              return (
+                <Card key={"championCard"+champion.id} alt={champion.name} image={champion.image}
+                    onClick={() => {putChampionIntoPlay(champion.id)}} disabled={selected} ready/>
+              )})
+          }
         </Box>
       </DialogContent>
     </Dialog>

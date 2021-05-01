@@ -36,6 +36,7 @@ export interface Card {
   image: string;
   ready: boolean;
   sacrifice: boolean;
+  stunnedSinceLastTurn: boolean;
 }
 
 export enum CardType {
@@ -83,6 +84,7 @@ export enum SpecialActionMode {
   PUT_CHAMPION_DISCARD_PILE_TOP_DECK = 'PUT_CHAMPION_DISCARD_PILE_TOP_DECK',
   SACRIFICE = 'SACRIFICE',
   CLERIC_BLESS = 'CLERIC_BLESS',
+  PUT_CHAMPION_DISCARD_INTO_PLAY = 'PUT_CHAMPION_DISCARD_INTO_PLAY',
   RANGER_TRACK = 'RANGER_TRACK',
 }
 
