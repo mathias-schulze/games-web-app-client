@@ -28,6 +28,10 @@ export const HERO_REALMS_BUY_FIRE_GEM_ENDPOINT = '/buy_fire_gem';
 export const HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT = '/process_character_round_abilities';
 export const HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT = '/process_character_one_time_abilities';
 export const HERO_REALMS_SELECT_PLAYER_FOR_BLESS_ENDPOINT = '/select_player_for_bless';
+export const HERO_REALMS_RANGER_TRACK_DISCARD_ENDPOINT = '/ranger_track_discard';
+export const HERO_REALMS_RANGER_TRACK_UP_ENDPOINT = '/ranger_track_up';
+export const HERO_REALMS_RANGER_TRACK_DOWN_ENDPOINT = '/ranger_track_down';
+export const HERO_REALMS_RANGER_TRACK_END_ENDPOINT = '/ranger_track_end';
 
 export const PLAYERS_ENDPOINT = 'players';
 

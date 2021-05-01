@@ -70,6 +70,8 @@ export interface PlayerArea {
   factionCountImperial: number;
   factionCountNecros: number;
   factionCountWild: number;
+  rangerTrackCards: Card[];
+  rangerTrackDiscardCount: number;
 }
 
 export enum SpecialActionMode {
@@ -81,6 +83,7 @@ export enum SpecialActionMode {
   PUT_CHAMPION_DISCARD_PILE_TOP_DECK = 'PUT_CHAMPION_DISCARD_PILE_TOP_DECK',
   SACRIFICE = 'SACRIFICE',
   CLERIC_BLESS = 'CLERIC_BLESS',
+  RANGER_TRACK = 'RANGER_TRACK',
 }
 
 export interface Decision {

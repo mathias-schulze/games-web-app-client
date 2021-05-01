@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Fab, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, Button } from '@material-ui/core';
-import { ExitToApp } from '@material-ui/icons';
+import { Fab, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, Button, IconButton, DialogActions } from '@material-ui/core';
+import { Delete, ExitToApp, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import api, { 
   HERO_REALMS_ENDPOINT,
   HERO_REALMS_END_TURN_ENDPOINT,
@@ -12,6 +12,10 @@ import api, {
   HERO_REALMS_PUT_CARD_TOP_DECK_ENDPOINT,
   HERO_REALMS_SACRIFICE_CARD_ENDPOINT,
   HERO_REALMS_SELECT_PLAYER_FOR_BLESS_ENDPOINT,
+  HERO_REALMS_RANGER_TRACK_DISCARD_ENDPOINT,
+  HERO_REALMS_RANGER_TRACK_UP_ENDPOINT,
+  HERO_REALMS_RANGER_TRACK_DOWN_ENDPOINT,
+  HERO_REALMS_RANGER_TRACK_END_ENDPOINT,
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, PlayerDecksAndCards, playerColors, Deck } from './HeroRealmsTable';
@@ -80,6 +84,16 @@ export const useStyles = makeStyles(theme => ({
     height: "135px",
     marginBottom: theme.spacing(2),
   },
+  rangerTrackCardContainer: {
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "center",
+    flexDirection: "column",
+  },
+  rangerTrackCard: {
+    display: "flex",
+    justifyContent: "center",
+  },
   endTurnButton: {
     position: 'fixed',
     bottom: theme.spacing(23),
@@ -137,6 +151,9 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.CLERIC_BLESS && 
         <ClericBlessDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.RANGER_TRACK && 
+        <RangerTrackDialog {...props}/>
       }
       <Box className={classes.cards}>
         <PlayedChampions id={props.id} area={area} justifyContent="flex-start" own/>
@@ -407,6 +424,81 @@ export function ClericBlessDialog(props: OwnAreaProps) {
           )})}
         </Box>
       </DialogContent>
+    </Dialog>
+  )
+}
+
+export function RangerTrackDialog(props: OwnAreaProps) {
+  
+  const classes = useStyles();
+  const area = props.area;
+  const rangerTrackCards = area.rangerTrackCards;
+  const cardCount = rangerTrackCards.length;
+  
+  const rangerTrackDiscard = async (id: string) => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_RANGER_TRACK_DISCARD_ENDPOINT, {cardId: id})
+        .then()
+        .catch(error => {});
+  }
+  
+  const rangerTrackUp = async (id: string) => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_RANGER_TRACK_UP_ENDPOINT, {cardId: id})
+        .then()
+        .catch(error => {});
+  }
+  
+  const rangerTrackDown = async (id: string) => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_RANGER_TRACK_DOWN_ENDPOINT, {cardId: id})
+        .then()
+        .catch(error => {});
+  }
+  
+  const rangerTrackEnd = async () => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_RANGER_TRACK_END_ENDPOINT)
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle max. 2 Karten zum abwerfen und sortiere den Rest
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.selectCardDialog}>
+          {rangerTrackCards.map(card => {
+              const index = rangerTrackCards.indexOf(card);
+              return (
+                <Box className={classes.rangerTrackCardContainer}>
+                  <Box className={classes.rangerTrackCard}>
+                    <Card key={"trackCard"+card.id} alt={card.name} image={card.image}
+                        onClick={() => {}} disabled={true} ready/>
+                  </Box>
+                  <Box>
+                    {index > 0 &&
+                      <IconButton onClick={() => {rangerTrackUp(card.id)}}>
+                        <NavigateBefore/>
+                      </IconButton>
+                    }
+                    <IconButton onClick={() => {rangerTrackDiscard(card.id)}} disabled={area.rangerTrackDiscardCount === 0}>
+                      <Delete/>
+                    </IconButton>
+                    {index < (cardCount-1) &&
+                      <IconButton onClick={() => {rangerTrackDown(card.id)}}>
+                        <NavigateNext/>
+                      </IconButton>
+                    }
+                  </Box>
+                </Box>
+              )})
+          }
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="primary" onClick={() => {rangerTrackEnd()}}>
+          Weiter
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }
