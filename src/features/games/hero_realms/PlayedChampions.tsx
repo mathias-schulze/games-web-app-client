@@ -58,7 +58,7 @@ function PlayedChampions(props: PlayedChampionsProps) {
     <Box>
       <Box className={classes.playedChampions} justifyContent={props.justifyContent}>
         {area.champions.map(champion => {
-          const attack = (props.attack && availableCombat >= champion.defense);
+          const attack = (props.attack && availableCombat >= (champion.defense - champion.damage));
           const disabled = !(attack || (props.own && area.active && champion.ready));
           return (
             <Card key={"playedChampion"+champion.id} alt={champion.name} image={champion.image}

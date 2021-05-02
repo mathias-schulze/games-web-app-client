@@ -18,6 +18,7 @@ import api, {
   HERO_REALMS_RANGER_TRACK_DOWN_ENDPOINT,
   HERO_REALMS_RANGER_TRACK_END_ENDPOINT,
   HERO_REALMS_ACQUIRE_OPPONENT_DISCARD_ENDPOINT,
+  HERO_REALMS_SELECT_PLAYER_FOR_FIREBALL_ENDPOINT,
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, PlayerDecksAndCards, playerColors, Deck } from './HeroRealmsTable';
@@ -152,7 +153,7 @@ function OwnArea(props: OwnAreaProps) {
         <SacrificeHandOrDiscardDialog {...props}/>
       }
       {area.actionMode === SpecialActionMode.CLERIC_BLESS && 
-        <ClericBlessDialog {...props}/>
+        <SelectPlay4BlessOrFireballDialog {...props} bless/>
       }
       {area.actionMode === SpecialActionMode.PUT_CHAMPION_DISCARD_INTO_PLAY && 
         <PutChampionDiscardIntoPlayDialog {...props}/>
@@ -162,6 +163,9 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.ACQUIRE_OPPONENT_DISCARD && 
         <AcquireOpponentDiscardDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.WIZARD_FIREBALL && 
+        <SelectPlay4BlessOrFireballDialog {...props} fireball/>
       }
       <Box className={classes.cards}>
         <PlayedChampions id={props.id} area={area} justifyContent="flex-start" own/>
@@ -392,7 +396,15 @@ export function SacrificeHandOrDiscardDialog(props: OwnAreaProps) {
   )
 }
 
-export function ClericBlessDialog(props: OwnAreaProps) {
+export interface SelectPlay4BlessOrFireballDialogProps {
+  id: string;
+  table: HeroRealmsTableView;
+  area: PlayerArea;
+  bless?: boolean;
+  fireball?: boolean;
+}
+
+export function SelectPlay4BlessOrFireballDialog(props: SelectPlay4BlessOrFireballDialogProps) {
   
   const classes = useStyles();
   const [selected, setSelected] = useState<boolean>(false);
@@ -406,18 +418,33 @@ export function ClericBlessDialog(props: OwnAreaProps) {
         .catch(error => {});
   }
 
+  const selectPlayer4Fireball = async (id: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_SELECT_PLAYER_FOR_FIREBALL_ENDPOINT, {playerId: id})
+        .then()
+        .catch(error => {});
+  }
+
+  const onClick = props.bless ? selectPlayer4Bless : (props.fireball ? selectPlayer4Fireball : (() => {}))
+  const areas = props.bless ? allAreas : (props.fireball ? props.table.otherPlayerAreas : null)
+
   return (
     <Dialog open={true} maxWidth="lg" onClose={() => {}}>
       <DialogTitle>
-        Wähle einen Spieler um ihn zu segnen
+        {props.bless && 
+          <div>Wähle einen Spieler um ihn zu segnen</div>
+        }
+        {props.fireball && 
+          <div>Wähle einen Spieler als Ziel</div>
+        }
       </DialogTitle>
       <DialogContent>
         <Box className={classes.selectBlessContainer}>
-          {allAreas.map(area => {
+          {areas?.map(area => {
             return (
               <Box>
                   <Button variant="contained" color="primary"
-                      onClick={() => {selectPlayer4Bless(area.playerId)}} disabled={selected}>
+                      onClick={() => {onClick(area.playerId)}} disabled={selected}>
                     {area.playerName}
                   </Button>
                   <Box className={classes.selectBlessChampionsContainer}>

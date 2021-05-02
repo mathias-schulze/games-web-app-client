@@ -37,6 +37,7 @@ export interface Card {
   ready: boolean;
   sacrifice: boolean;
   stunnedSinceLastTurn: boolean;
+  damage: number;
 }
 
 export enum CardType {
@@ -87,6 +88,7 @@ export enum SpecialActionMode {
   PUT_CHAMPION_DISCARD_INTO_PLAY = 'PUT_CHAMPION_DISCARD_INTO_PLAY',
   RANGER_TRACK = 'RANGER_TRACK',
   ACQUIRE_OPPONENT_DISCARD = 'ACQUIRE_OPPONENT_DISCARD',
+  WIZARD_FIREBALL = 'WIZARD_FIREBALL',
 }
 
 export interface Decision {
