@@ -33,6 +33,7 @@ export const HERO_REALMS_RANGER_TRACK_DISCARD_ENDPOINT = '/ranger_track_discard'
 export const HERO_REALMS_RANGER_TRACK_UP_ENDPOINT = '/ranger_track_up';
 export const HERO_REALMS_RANGER_TRACK_DOWN_ENDPOINT = '/ranger_track_down';
 export const HERO_REALMS_RANGER_TRACK_END_ENDPOINT = '/ranger_track_end';
+export const HERO_REALMS_ACQUIRE_OPPONENT_DISCARD_ENDPOINT = '/acquire_opponent_discard';
 
 export const PLAYERS_ENDPOINT = 'players';
 

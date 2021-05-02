@@ -17,6 +17,7 @@ import api, {
   HERO_REALMS_RANGER_TRACK_UP_ENDPOINT,
   HERO_REALMS_RANGER_TRACK_DOWN_ENDPOINT,
   HERO_REALMS_RANGER_TRACK_END_ENDPOINT,
+  HERO_REALMS_ACQUIRE_OPPONENT_DISCARD_ENDPOINT,
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, PlayerDecksAndCards, playerColors, Deck } from './HeroRealmsTable';
@@ -158,6 +159,9 @@ function OwnArea(props: OwnAreaProps) {
       }
       {area.actionMode === SpecialActionMode.RANGER_TRACK && 
         <RangerTrackDialog {...props}/>
+      }
+      {area.actionMode === SpecialActionMode.ACQUIRE_OPPONENT_DISCARD && 
+        <AcquireOpponentDiscardDialog {...props}/>
       }
       <Box className={classes.cards}>
         <PlayedChampions id={props.id} area={area} justifyContent="flex-start" own/>
@@ -535,6 +539,49 @@ export function RangerTrackDialog(props: OwnAreaProps) {
           Weiter
         </Button>
       </DialogActions>
+    </Dialog>
+  )
+}
+
+export function AcquireOpponentDiscardDialog(props: OwnAreaProps) {
+  
+  const classes = useStyles();
+  const [selected, setSelected] = useState<boolean>(false);
+
+  const acquireOpponentCard = async (playerId: string, cardId: string) => {
+    setSelected(true);
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_ACQUIRE_OPPONENT_DISCARD_ENDPOINT, 
+          {playerId: playerId, cardId: cardId})
+        .then()
+        .catch(error => {});
+  }
+
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        Wähle eine Karte die du kaufen möchtest.
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.stunChampionPlayerBox}>
+          {props.table.otherPlayerAreas.map(otherArea => {
+            return (
+              <Fragment>
+                <Typography variant="subtitle1">{otherArea.playerName}</Typography>
+                <Box className={classes.stunChampionChampionsBox}>
+                  {otherArea.discardPile.cards
+                      .filter(card => card.cost > 0 && card.cost <= props.area.gold)
+                      .map(card => {
+                    return (
+                      <Card key={"discardCard"+card.id} alt={card.name} image={card.image}
+                          onClick={() => {acquireOpponentCard(otherArea.playerId, card.id)}} disabled={selected} ready/>
+                    )})
+                  }
+                </Box>
+              </Fragment>
+            )
+          })}
+        </Box>
+      </DialogContent>
     </Dialog>
   )
 }
