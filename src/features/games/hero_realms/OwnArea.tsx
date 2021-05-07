@@ -234,7 +234,8 @@ export function OpponentDiscardCardDialog(props: OwnAreaProps) {
       </DialogTitle>
       <DialogContent>
         <Box className={classes.selectOpponentDeckContainer}>
-          {props.table.otherPlayerAreas.map(otherArea => {
+          {props.table.otherPlayerAreas.filter(otherArea => otherArea.handSize > 0)
+              .map(otherArea => {
             const className = otherArea.selected4Discard ? classes.selectOpponentDeckBoxSelected : classes.selectOpponentDeckBox;
             return (
               <Box className={className}>
