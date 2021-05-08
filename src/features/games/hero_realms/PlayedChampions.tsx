@@ -27,7 +27,6 @@ function PlayedChampions(props: PlayedChampionsProps) {
   const classes = useStyles(props);
 
   const area = props.area;
-  const availableCombat = (props.availableCombat ? props.availableCombat : 0);
 
   const handleChampionClick = (championId:string) => {
 
