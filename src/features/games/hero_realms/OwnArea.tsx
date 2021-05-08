@@ -441,7 +441,8 @@ export function SelectPlay4BlessOrFireballDialog(props: SelectPlay4BlessOrFireba
       </DialogTitle>
       <DialogContent>
         <Box className={classes.selectBlessContainer}>
-          {areas?.map(area => {
+          {areas?.filter(area => !area.killed)
+              .map(area => {
             return (
               <Box>
                   <Button variant="contained" color="primary"
