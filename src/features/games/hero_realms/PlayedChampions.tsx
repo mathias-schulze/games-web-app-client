@@ -29,19 +29,19 @@ function PlayedChampions(props: PlayedChampionsProps) {
   const area = props.area;
   const availableCombat = (props.availableCombat ? props.availableCombat : 0);
 
-  const handleChampionClick = (championId:string, attack:number) => {
+  const handleChampionClick = (championId:string) => {
 
     if (props.own) {
       playChampion(championId);
     } else {
-      sendAttack(championId, attack);
+      sendAttack(championId);
     }
   }
 
-  const sendAttack = async (championId:string, attack:number) => {
+  const sendAttack = async (championId:string) => {
 
     await api.post(HERO_REALMS_ENDPOINT + '/' + props.id + HERO_REALMS_ATTACK_ENDPOINT, 
-            {playerId: area.playerId, championId: championId, value: attack})
+            {playerId: area.playerId, championId: championId})
         .then()
         .catch(error => {});
   };
@@ -58,11 +58,10 @@ function PlayedChampions(props: PlayedChampionsProps) {
     <Box>
       <Box className={classes.playedChampions} justifyContent={props.justifyContent}>
         {area.champions.map(champion => {
-          const attack = (props.attack && availableCombat >= (champion.defense - champion.damage));
-          const disabled = !(attack || (props.own && area.active && champion.ready));
+          const disabled = !(props.attack || (props.own && area.active && champion.ready));
           return (
             <Card key={"playedChampion"+champion.id} alt={champion.name} image={champion.image}
-                onClick={() => handleChampionClick(champion.id, champion.defense)} disabled={disabled}
+                onClick={() => handleChampionClick(champion.id)} disabled={disabled}
                 ready={champion.ready}/>
           )})
         }
