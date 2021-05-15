@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, IconButton } from '@material-ui/core';
+import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, IconButton, DialogActions } from '@material-ui/core';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
 import { getAuth } from '../../common/auth/authSlice'
 import { Stage } from '../../common/Const';
@@ -17,6 +17,8 @@ import api, {
   HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT,
   HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT
 } from '../../common/api/api';
+import { showDiscardPile, hideDiscardPileDialog, getShowDiscardPilePlayerId } from './heroRealmsSlice';
+
 export const playerColors = [blue[100], green[100], red[100], yellow[100]];
 
 export const useStyles = makeStyles(theme => ({
@@ -85,6 +87,10 @@ export const useStyles = makeStyles(theme => ({
   },
   playDecksAndCardsBox: {
     display: "flex",
+  },
+  discardPileDialog: {
+    display: "flex",
+    justifyContent: "center",
   },
 }));
 
@@ -252,10 +258,12 @@ export interface PlayerDecksAndCardsProps {
 export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
 
   const classes = useStyles();
-
+  const dispatch = useDispatch();
+  
   const table = props.table;
   const area = props.area;
   const discardPileImage = ((area.discardPile.size === 0) ? table.emptyDeck : (area.discardPile.cards[area.discardPile.size-1].image));
+  const showDiscardPilePlayerId = useSelector(getShowDiscardPilePlayerId);
   const roundAbilityReady = area.characterRoundAbilityActive != null && area.characterRoundAbilityActive;
   const roundAbilityDisabled = !area.active || !props.own || !roundAbilityReady;
   const oneTimeAbilityDisabled = !area.active || !props.own;
@@ -280,7 +288,7 @@ export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
 
       <Deck alt="discard pile" count={area.discardPile.size} 
           image={discardPileImage} emptyImage={table.emptyDeck}
-          onClick={() => {}} disabled={true}/>
+          onClick={() => {dispatch(showDiscardPile(area.playerId))}} disabled={false}/>
       {area.characterRoundAbilityImage &&
         <Card key={"roundAbility"} alt="round ability" image={area.characterRoundAbilityImage}
                   onClick={() => {processCharacterRoundAbilities()}} disabled={roundAbilityDisabled} ready={roundAbilityReady}/>
@@ -289,7 +297,42 @@ export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
         <Card key={"oneTimeAbility"} alt="one time ability" image={area.characterOneTimeAbilityImage}
                   onClick={() => {processCharacterOneTimeAbilities()}} disabled={oneTimeAbilityDisabled} ready/>
       }
+
+      {showDiscardPilePlayerId === area.playerId &&
+        <ShowDiscardPileDialog {...props}/>
+      }
     </Box>
+  )
+}
+
+function ShowDiscardPileDialog(props: PlayerDecksAndCardsProps) {
+  
+  const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const area = props.area;
+  
+  return (
+    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
+      <DialogTitle>
+        {area.playerName}
+      </DialogTitle>
+      <DialogContent>
+        <Box className={classes.discardPileDialog}>
+          {props.area.discardPile.cards.map(card => {
+              return (
+                <Card key={"discardCard"+card.id} alt={card.name} image={card.image}
+                    onClick={() => {}} disabled ready/>
+              )})
+          }
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="primary" onClick={() => {dispatch(hideDiscardPileDialog())}}>
+          Schließen
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 
