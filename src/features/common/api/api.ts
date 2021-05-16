@@ -35,6 +35,7 @@ export const HERO_REALMS_RANGER_TRACK_DOWN_ENDPOINT = '/ranger_track_down';
 export const HERO_REALMS_RANGER_TRACK_END_ENDPOINT = '/ranger_track_end';
 export const HERO_REALMS_ACQUIRE_OPPONENT_DISCARD_ENDPOINT = '/acquire_opponent_discard';
 export const HERO_REALMS_SELECT_PLAYER_FOR_FIREBALL_ENDPOINT = '/select_player_for_fireball';
+export const HERO_REALMS_CANCEL_SPECIAL_ACTION_MODE_ENDPOINT = '/cancel_special_action_mode';
 
 export const PLAYERS_ENDPOINT = 'players';
 

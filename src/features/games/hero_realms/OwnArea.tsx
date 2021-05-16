@@ -19,6 +19,7 @@ import api, {
   HERO_REALMS_RANGER_TRACK_END_ENDPOINT,
   HERO_REALMS_ACQUIRE_OPPONENT_DISCARD_ENDPOINT,
   HERO_REALMS_SELECT_PLAYER_FOR_FIREBALL_ENDPOINT,
+  HERO_REALMS_CANCEL_SPECIAL_ACTION_MODE_ENDPOINT,
 } from '../../common/api/api';
 import HealthGoldCombatIndicator from './HealthGoldCombatIndicator';
 import { Card, PlayerDecksAndCards, playerColors, Deck } from './HeroRealmsTable';
@@ -184,6 +185,12 @@ function OwnArea(props: OwnAreaProps) {
   )
 }
 
+const endSpecialActionMode = async (id: string) => {
+  await api.post(HERO_REALMS_ENDPOINT + "/" + id + HERO_REALMS_CANCEL_SPECIAL_ACTION_MODE_ENDPOINT)
+      .then()
+      .catch(error => {});
+}
+
 export function DiscardCardDialog(props: OwnAreaProps) {
   
   const classes = useStyles();
@@ -247,6 +254,11 @@ export function OpponentDiscardCardDialog(props: OwnAreaProps) {
           )})}
         </Box>
       </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="primary" onClick={() => {endSpecialActionMode(props.id)}}>
+          Abbrechen
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }
@@ -279,6 +291,11 @@ export function PrepareChampionDialog(props: OwnAreaProps) {
           }
         </Box>
       </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="primary" onClick={() => {endSpecialActionMode(props.id)}}>
+          Abbrechen
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }
@@ -320,6 +337,11 @@ export function StunTargetChampionDialog(props: OwnAreaProps) {
           })}
         </Box>
       </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="primary" onClick={() => {endSpecialActionMode(props.id)}}>
+          Abbrechen
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }
@@ -361,6 +383,11 @@ export function PutCardTopDeckDialog(props: PutCardTopDeckProps) {
           }
         </Box>
       </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="primary" onClick={() => {endSpecialActionMode(props.id)}}>
+          Abbrechen
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }
@@ -393,6 +420,11 @@ export function SacrificeHandOrDiscardDialog(props: OwnAreaProps) {
           }
         </Box>
       </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="primary" onClick={() => {endSpecialActionMode(props.id)}}>
+          Abbrechen
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }
@@ -461,6 +493,13 @@ export function SelectPlay4BlessOrFireballDialog(props: SelectPlay4BlessOrFireba
           )})}
         </Box>
       </DialogContent>
+      {props.bless &&
+        <DialogActions>
+          <Button variant="text" color="primary" onClick={() => {endSpecialActionMode(props.id)}}>
+            Abbrechen
+          </Button>
+        </DialogActions>
+      }
     </Dialog>
   )
 }
