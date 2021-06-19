@@ -665,6 +665,8 @@ function EndTurnButton(props: EndTurnButtonProps) {
 
   const [ endTurnButtonAvailable, setEndTurnButtonAvailable ] = useState<boolean>(false);
 
+  const openActions = ((props.area.combat + props.area.gold) > 0 || props.area.decisions.length > 0);
+
   useEffect(() => {
     setEndTurnButtonAvailable(props.area.active);
   }, [props.area.active])
@@ -681,9 +683,9 @@ function EndTurnButton(props: EndTurnButtonProps) {
   return (
     <Fragment>
       {endTurnButtonAvailable &&
-        <Fab variant="extended" color="primary" className={classes.endTurnButton} onClick={() => endTurn()}>
+        <Fab variant="extended" color={openActions ? "default" : "primary"} className={classes.endTurnButton} onClick={() => endTurn()}>
           <ExitToApp className={classes.endTurnButtonIcon}/>
-          Zug beenden
+          {openActions ? "" : "Zug beenden"}
         </Fab>
       }
     </Fragment>
