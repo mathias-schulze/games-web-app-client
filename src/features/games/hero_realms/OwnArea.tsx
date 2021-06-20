@@ -665,7 +665,7 @@ function EndTurnButton(props: EndTurnButtonProps) {
 
   const [ endTurnButtonAvailable, setEndTurnButtonAvailable ] = useState<boolean>(false);
 
-  const openActions = ((props.area.combat + props.area.gold) > 0 || props.area.decisions.length > 0);
+  const openActions = ((props.area.combat + props.area.gold) > 0 || props.area.decisions == null || props.area.decisions.length > 0);
 
   useEffect(() => {
     setEndTurnButtonAvailable(props.area.active);
