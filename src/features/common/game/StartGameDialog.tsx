@@ -54,7 +54,9 @@ function StartGameDialog(props: StartGameProps) {
           await api.get<Player[]>(PLAYERS_ENDPOINT + '?ids=' + data.players.join(","))
               .then((response: { data: Player[]; }) => {
             const playersData = response.data;
-            setStartButtonDisabled(playersData.length < minPlayer);
+            if (data.players.includes(userId)) {
+              setStartButtonDisabled(playersData.length < minPlayer);
+            }
             for (let i = playersData.length; i < maxPlayer; i++) {
               playersData.push({id: "free"+i, name: (i < minPlayer ? "notwendig" : "frei")})
             }
