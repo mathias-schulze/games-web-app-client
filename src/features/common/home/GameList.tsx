@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
 import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles, Avatar, Tooltip, Switch } from '@material-ui/core'
-import { Star, Group, PlayArrow, Refresh } from '@material-ui/icons'
+import { Star, Group, PlayArrow, Refresh, Delete } from '@material-ui/icons'
 import { green, orange } from '@material-ui/core/colors';
 import { AvatarGroup } from '@material-ui/lab';
 import moment from 'moment'
-import api, { GAMES_ACTIVE_ENDPOINT } from '../api/api'
+import api, { GAMES_ENDPOINT, GAMES_ACTIVE_ENDPOINT } from '../api/api'
 import { isConnected } from '../api/apiSlice'
 import { ActiveGame } from '../game/GameTypes'
 import { getAuth } from '../auth/authSlice';
@@ -53,6 +53,13 @@ function GameList() {
   const handleHideFinishedSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setHideFinished(event.target.checked);
   };
+
+  const deleteGame = async (gameId: string) => {
+    await api.delete(GAMES_ENDPOINT + "/" + gameId)
+        .then()
+        .catch(error => {});
+    refreshGameList();
+  }
 
   return (
     <div>
@@ -101,7 +108,10 @@ function GameList() {
                         {game.stage === Stage.RUNNING && <PlayArrow/>}
                         {game.stage === Stage.FINISHED && <Star/>}
                       </IconButton>
-                    }
+                      }
+                    <IconButton edge="end" onClick={() => deleteGame(game.id)}>
+                      <Delete/>
+                    </IconButton>
                   </Box>
                 </TableCell>
               </TableRow>
