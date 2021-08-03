@@ -36,6 +36,7 @@ function GameList() {
   const auth = useSelector(getAuth);
   const [hideFinished, setHideFinished] = useState(true);
   const [tables, setTables] = useState<GameTable[]>([]);
+  const visibleTables = tables.filter(table => !hideFinished || table.stage !== Stage.FINISHED);
   const history = useHistory();
 
   useEffect(() => {
@@ -80,8 +81,7 @@ function GameList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tables.filter(table => !hideFinished || table.stage !== Stage.FINISHED)
-                .map((game: GameTable) => (
+            {visibleTables.map((game: GameTable) => (
               <TableRow key={"gameTable"+game.id}>
                 <TableCell>{game.game + " (#" + game.no + ")"}</TableCell>
                 <TableCell>{moment(game.created).format('L')}</TableCell>
@@ -116,9 +116,9 @@ function GameList() {
                 </TableCell>
               </TableRow>
             ))}
-            {tables.length === 0 &&
+            {visibleTables.length === 0 &&
               <TableRow key="noActiveGame">
-                <TableCell colSpan={3} align="center">Keine aktiven Spiele</TableCell>
+                <TableCell colSpan={3} align="center">Keine {hideFinished ? 'aktiven ' : ''}Spiele</TableCell>
               </TableRow>
             }
           </TableBody>
