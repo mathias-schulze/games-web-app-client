@@ -3,10 +3,12 @@ import { RootState } from '../store/store';
 
 interface ApiState {
   connected: boolean,
+  waiting: boolean,
 }
 
 const initialState: ApiState = {
   connected: false,
+  waiting: false,
 };
 
 export const apiSlice = createSlice({
@@ -16,11 +18,15 @@ export const apiSlice = createSlice({
     setConnected: (state, action: PayloadAction<boolean>) => {
       state.connected = action.payload;
     },
+    setWaiting: (state, action: PayloadAction<boolean>) => {
+      state.waiting = action.payload;
+    },
   },
 });
 
-export const { setConnected } = apiSlice.actions;
+export const { setConnected, setWaiting } = apiSlice.actions;
 
 export const isConnected = (state: RootState) => state.api.connected;
+export const isWaiting = (state: RootState) => state.api.waiting;
 
 export default apiSlice.reducer;

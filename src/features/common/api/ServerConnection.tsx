@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux'
 import { Badge, IconButton } from '@material-ui/core'
 import { Storage } from '@material-ui/icons'
 import api, { HEALTH_ENDPOINT } from './api'
-import { isConnected, setConnected } from './apiSlice'
+import { isConnected, setConnected, setWaiting } from './apiSlice'
 import { store } from '../store/store'
 import { addNotification, NotificationType } from '../home/appSlice'
 
 function ServerConnection() {
 
   const connected = useSelector(isConnected);
-
+  
   useEffect(() => {
     checkServerHealth(true);
     const startHealthCheck = setInterval(() => checkServerHealth(false), 10000);
@@ -29,10 +29,16 @@ function ServerConnection() {
 const checkServerHealth = async (first: boolean) => {
 
   const connected = store.getState().api.connected;
+  const waiting = store.getState().api.waiting;
   const dispatch = store.dispatch;
   
+  if (waiting) {
+    return;
+  }
+
   let sendNotification = false;
   try {
+    dispatch(setWaiting(true))
     await api.get(HEALTH_ENDPOINT).then(response => {
       const status = response.data.status
       if (connected !== true && status === 'UP') {
@@ -43,6 +49,7 @@ const checkServerHealth = async (first: boolean) => {
         sendNotification = true;
       }
     })
+    dispatch(setWaiting(false))
   } catch (error) {
     if (connected === true) {
       dispatch(setConnected(false))
