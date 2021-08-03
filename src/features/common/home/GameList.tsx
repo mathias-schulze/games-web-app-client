@@ -6,9 +6,9 @@ import { Star, Group, PlayArrow, Refresh, Delete } from '@material-ui/icons'
 import { green, orange } from '@material-ui/core/colors';
 import { AvatarGroup } from '@material-ui/lab';
 import moment from 'moment'
-import api, { GAMES_ENDPOINT, GAMES_ACTIVE_ENDPOINT } from '../api/api'
+import api, { GAMES_ENDPOINT, GAMES_TABLES_ENDPOINT } from '../api/api'
 import { isConnected } from '../api/apiSlice'
-import { ActiveGame } from '../game/GameTypes'
+import { GameTable } from '../game/GameTypes'
 import { getAuth } from '../auth/authSlice';
 import { Stage } from '../Const';
 
@@ -35,7 +35,7 @@ function GameList() {
   const connected = useSelector(isConnected);
   const auth = useSelector(getAuth);
   const [hideFinished, setHideFinished] = useState(true);
-  const [activeGames, setActiveGames] = useState<ActiveGame[]>([]);
+  const [tables, setTables] = useState<GameTable[]>([]);
   const history = useHistory();
 
   useEffect(() => {
@@ -45,8 +45,8 @@ function GameList() {
   }, [connected]);
   
   const refreshGameList = () => {
-    api.get<ActiveGame[]>(GAMES_ACTIVE_ENDPOINT).then((response: { data: ActiveGame[]; }) => {
-      setActiveGames(response.data)
+    api.get<GameTable[]>(GAMES_TABLES_ENDPOINT).then((response: { data: GameTable[]; }) => {
+      setTables(response.data)
     }).catch(error => {});
   }
 
@@ -80,9 +80,9 @@ function GameList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {activeGames.filter(game => !hideFinished || game.stage !== Stage.FINISHED)
-                .map((game: ActiveGame) => (
-              <TableRow key={"activeGame"+game.id}>
+            {tables.filter(table => !hideFinished || table.stage !== Stage.FINISHED)
+                .map((game: GameTable) => (
+              <TableRow key={"gameTable"+game.id}>
                 <TableCell>{game.game + " (#" + game.no + ")"}</TableCell>
                 <TableCell>{moment(game.created).format('L')}</TableCell>
                 <TableCell>
@@ -116,7 +116,7 @@ function GameList() {
                 </TableCell>
               </TableRow>
             ))}
-            {activeGames.length === 0 &&
+            {tables.length === 0 &&
               <TableRow key="noActiveGame">
                 <TableCell colSpan={3} align="center">Keine aktiven Spiele</TableCell>
               </TableRow>

@@ -6,7 +6,7 @@ export interface GameParameter {
   maxPlayer: number;
 }
 
-export interface ActiveGame {
+export interface GameTable {
   id: string;
   no: number;
   created: number;

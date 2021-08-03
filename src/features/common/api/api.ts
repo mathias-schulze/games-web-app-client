@@ -7,7 +7,7 @@ export const HEALTH_ENDPOINT = 'actuator/health';
 export const GAMES_ENDPOINT = 'games';
 export const GAMES_LIST_ENDPOINT = GAMES_ENDPOINT + '/list';
 export const GAMES_PARAM_ENDPOINT = GAMES_ENDPOINT + '/parameter';
-export const GAMES_ACTIVE_ENDPOINT = GAMES_ENDPOINT + '/active';
+export const GAMES_TABLES_ENDPOINT = GAMES_ENDPOINT + '/tables';
 export const GAMES_JOIN_ENDPOINT = '/join';
 export const GAMES_START_ENDPOINT = '/start';
 

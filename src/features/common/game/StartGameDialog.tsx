@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, 
   Paper, TableContainer, Table, TableBody, TableCell, TableRow, makeStyles } from '@material-ui/core';
-import { GameParameter, ActiveGame, Player } from '../game/GameTypes'
+import { GameParameter, GameTable, Player } from '../game/GameTypes'
 import api, { GAMES_ENDPOINT, GAMES_PARAM_ENDPOINT, GAMES_JOIN_ENDPOINT, GAMES_START_ENDPOINT, PLAYERS_ENDPOINT } from '../api/api';
 import { firestore, COLLECTION_GAMES } from '../firebase/Firebase';
 import { getAuth } from '../auth/authSlice'
@@ -26,7 +26,7 @@ interface StartGameProps {
 function StartGameDialog(props: StartGameProps) {
 
   const classes = useStyles();
-  const [game, setGame] = useState<ActiveGame|undefined>(undefined);
+  const [game, setGame] = useState<GameTable|undefined>(undefined);
   const [gameParams, setGameParams] = useState<GameParameter|undefined>();
   const [players, setPlayers] = useState<Player[]>([]);
   const userId = useSelector(getAuth)?.uid;
