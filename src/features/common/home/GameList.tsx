@@ -108,10 +108,12 @@ function GameList() {
                         {game.stage === Stage.RUNNING && <PlayArrow/>}
                         {game.stage === Stage.FINISHED && <Star/>}
                       </IconButton>
-                      }
-                    <IconButton edge="end" onClick={() => deleteGame(game.id)}>
-                      <Delete/>
-                    </IconButton>
+                    }
+                    {game.stage === Stage.FINISHED &&
+                      <IconButton edge="end" onClick={() => deleteGame(game.id)}>
+                        <Delete/>
+                      </IconButton>
+                    }
                   </Box>
                 </TableCell>
               </TableRow>
