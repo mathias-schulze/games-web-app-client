@@ -97,6 +97,7 @@ export const useStyles = makeStyles(theme => ({
 export interface HeroRealmsTableProps {
     id: string;
     stage: Stage;
+    winner: string | undefined;
 }
 
 function HeroRealmsTable(props: HeroRealmsTableProps) {
@@ -139,7 +140,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
           <CommonArea id={props.id} table={table}/>
           <OwnArea id={props.id} area={table.ownPlayerArea} table={table}/>
           
-          {props.stage === Stage.FINISHED && <GameFinishedDialog table={table}/>}
+          {props.stage === Stage.FINISHED && <GameFinishedDialog game={props} table={table}/>}
         </Box>
       }
     </div>
@@ -147,6 +148,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
 }
 
 export interface GameFinishedDialogProps {
+  game: HeroRealmsTableProps;
   table: HeroRealmsTableView;
 }
 
@@ -154,12 +156,7 @@ function GameFinishedDialog(props: GameFinishedDialogProps) {
 
   const classes = useStyles();
 
-  let winner;
-  if (!props.table.ownPlayerArea.killed) {
-    winner = props.table.ownPlayerArea.playerName;
-  } else {
-    winner = props.table.otherPlayerAreas.filter(area => !area.killed)[0].playerName;
-  }
+  let winner = props.game.winner && props.table.players.filter(player => player.id === props.game.winner)[0].name;
 
   return (
     <Box className={classes.finishedContainer}>

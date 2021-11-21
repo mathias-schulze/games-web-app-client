@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
 import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles, Avatar, Tooltip, Switch } from '@material-ui/core'
 import { Star, Group, PlayArrow, Refresh, Delete } from '@material-ui/icons'
-import { green, orange } from '@material-ui/core/colors';
+import { green, orange, red } from '@material-ui/core/colors';
 import { AvatarGroup } from '@material-ui/lab';
 import moment from 'moment'
 import api, { GAMES_ENDPOINT, GAMES_TABLES_ENDPOINT } from '../api/api'
@@ -26,6 +26,12 @@ const useStyles = makeStyles(theme => ({
   },
   playerAvatarActive: {
     backgroundColor: orange[500],
+  },
+  winner: {
+    borderColor: red[800],
+    width: "33px",
+    height: "33px",
+    borderWidth: "5px",
   },
 }));
 
@@ -88,7 +94,8 @@ function GameList() {
                 <TableCell>
                   <AvatarGroup>
                     {game.players.map(player => {
-                      const className = (player.id === auth?.uid) ? classes.playerAvatarActive : classes.playerAvatar;
+                      const className = ((player.id === auth?.uid) ? classes.playerAvatarActive : classes.playerAvatar)
+                        + ((player.id === game.winner) ? " " + classes.winner : "");
                       return (
                         <Tooltip key={"playerAvatar" + player.id} title={player.name} placement="bottom">
                           <Avatar alt={player.name} className={className}>{player.name.charAt(0)}</Avatar>

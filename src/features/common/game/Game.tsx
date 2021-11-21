@@ -14,11 +14,13 @@ function Game() {
   const params = useParams<UrlParams>();
   const [stage, setStage] = useState<string>()
   const [game, setGame] = useState<string>()
+  const [winner, setWinner] = useState<string>();
 
   useEffect(() => {
     const unsubscribe = firestore.collection(COLLECTION_GAMES).doc(params.id).onSnapshot((doc) => {
       setStage(doc.data()?.stage);
       setGame(doc.data()?.game);
+      setWinner(doc.data()?.winner);
     });
     return () => {unsubscribe()};
   }, [params.id])
@@ -29,7 +31,7 @@ function Game() {
         <StartGameDialog id={params.id}/>
       }
       {(stage === Stage.RUNNING || stage === Stage.FINISHED) &&
-        <GameTable id={params.id} game={game} stage={stage}/>
+        <GameTable id={params.id} game={game} stage={stage} winner={winner}/>
       }
     </div>
   )

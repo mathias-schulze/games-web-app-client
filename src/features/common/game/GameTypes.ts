@@ -13,6 +13,7 @@ export interface GameTable {
   game: string;
   stage: string;
   players: Player[];
+  winner?: string;
 }
 
 export interface Player {
