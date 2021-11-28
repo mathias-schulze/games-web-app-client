@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useDocument } from 'react-firebase-hooks/firestore';
+import { useDocument, useDocumentDataOnce } from 'react-firebase-hooks/firestore';
 import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, IconButton, DialogActions } from '@material-ui/core';
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
 import { getAuth } from '../../common/auth/authSlice'
@@ -18,6 +18,7 @@ import api, {
   HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT
 } from '../../common/api/api';
 import { showDiscardPile, hideDiscardPileDialog, getShowDiscardPilePlayerId } from './heroRealmsSlice';
+import { Game } from '../../common/game/GameTypes';
 
 export const playerColors = [blue[100], green[100], red[100], yellow[100]];
 
@@ -104,10 +105,20 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
 
   const classes = useStyles();
   const userId = useSelector(getAuth)?.uid;
+  const [game] = useDocumentDataOnce<Game>(
+    firestore.collection(COLLECTION_GAMES).doc(props.id)
+  );
+  const [isObserver, setIsObserver] = useState(true);
   const [userTableView] = useDocument(
-    firestore.collection(COLLECTION_GAMES).doc(props.id).collection(COLLECTION_TABLE).doc(userId?userId:"x")
+    firestore.collection(COLLECTION_GAMES).doc(props.id).collection(COLLECTION_TABLE).doc(!userId || isObserver ? "observer" : userId)
   );
   const [ table, setTable ] = useState<HeroRealmsTableView>();
+
+  useEffect(() => {
+    if (game) {
+      setIsObserver(game.players.filter(player => player === userId).length === 0);
+    }
+  }, [game, userId])
 
   useEffect(() => {
     if (userTableView) {
@@ -128,7 +139,7 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
         <Box className={classes.table}>
           <Box className={classes.otherAreas}>
             {table.otherPlayerAreas.map(area => {
-              return <OtherArea id={props.id} table={table} area={area} key={"area"+area.playerId}
+              return <OtherArea id={props.id} table={table} area={area} observer={isObserver} key={"area"+area.playerId}
                   justifyContent={getJustifyContent(table, area)} availableCombat={table.ownPlayerArea.combat}/> })
             }
           </Box>
@@ -137,8 +148,8 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
                 return <PlayedCards key={"playedCards"+area.playerId}
                     id={props.id} area={area} justifyContent={getJustifyContent(table, area)}/> })
               }
-          <CommonArea id={props.id} table={table}/>
-          <OwnArea id={props.id} area={table.ownPlayerArea} table={table}/>
+          <CommonArea id={props.id} table={table} observer={isObserver}/>
+          <OwnArea id={props.id} area={table.ownPlayerArea} table={table} observer={isObserver}/>
           
           {props.stage === Stage.FINISHED && <GameFinishedDialog game={props} table={table}/>}
         </Box>
@@ -250,6 +261,7 @@ export interface PlayerDecksAndCardsProps {
   table: HeroRealmsTableView;
   area: PlayerArea;
   own?: boolean;
+  observer: boolean;
 }
 
 export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
@@ -262,8 +274,8 @@ export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
   const discardPileImage = ((area.discardPile.size === 0) ? table.emptyDeck : (area.discardPile.cards[area.discardPile.size-1].image));
   const showDiscardPilePlayerId = useSelector(getShowDiscardPilePlayerId);
   const roundAbilityReady = area.characterRoundAbilityActive != null && area.characterRoundAbilityActive;
-  const roundAbilityDisabled = !area.active || !props.own || !roundAbilityReady;
-  const oneTimeAbilityDisabled = !area.active || !props.own;
+  const roundAbilityDisabled = props.observer || !area.active || !props.own || !roundAbilityReady;
+  const oneTimeAbilityDisabled = props.observer || !area.active || !props.own;
 
   const processCharacterRoundAbilities = async () => {
     await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT)

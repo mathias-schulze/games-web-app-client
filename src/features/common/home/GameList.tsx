@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
 import { Paper, TableContainer, Table, TableHead, TableBody, TableCell, TableRow, IconButton, Box, Fab, makeStyles, Avatar, Tooltip, Switch } from '@material-ui/core'
-import { Star, Group, PlayArrow, Refresh, Delete } from '@material-ui/icons'
+import { Star, Group, PlayArrow, Refresh, Delete, Visibility } from '@material-ui/icons'
 import { green, orange, red } from '@material-ui/core/colors';
 import { AvatarGroup } from '@material-ui/lab';
 import moment from 'moment'
@@ -87,7 +87,9 @@ function GameList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {visibleTables.map((game: GameTable) => (
+            {visibleTables.map((game: GameTable) => {
+              const isPlayer = game.players.filter(player => player.id === auth?.uid).length > 0;
+              return (
               <TableRow key={"gameTable"+game.id}>
                 <TableCell>{game.game + " (#" + game.no + ")"}</TableCell>
                 <TableCell>{moment(game.created).format('L')}</TableCell>
@@ -106,14 +108,15 @@ function GameList() {
                 </TableCell>
                 <TableCell>
                   <Box m={-2} pt={-2}>
-                    {(game.stage === Stage.NEW || game.players.filter(player => player.id === auth?.uid).length > 0) &&
+                    {
                       <IconButton edge="end" onClick={(e: React.SyntheticEvent) => {
                             e.preventDefault();
                             history.push("/game/" + game.id);
                           }}>
                         {game.stage === Stage.NEW && <Group/>}
-                        {game.stage === Stage.RUNNING && <PlayArrow/>}
-                        {game.stage === Stage.FINISHED && <Star/>}
+                        {game.stage === Stage.RUNNING && isPlayer && <PlayArrow/>}
+                        {game.stage === Stage.FINISHED && isPlayer && <Star/>}
+                        {game.stage !== Stage.NEW && !isPlayer && <Visibility/>}
                       </IconButton>
                     }
                     {game.stage === Stage.FINISHED &&
@@ -124,7 +127,7 @@ function GameList() {
                   </Box>
                 </TableCell>
               </TableRow>
-            ))}
+            )})}
             {visibleTables.length === 0 &&
               <TableRow key="noActiveGame">
                 <TableCell colSpan={3} align="center">Keine {hideFinished ? 'aktiven ' : ''}Spiele</TableCell>

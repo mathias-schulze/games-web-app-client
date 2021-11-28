@@ -11,6 +11,12 @@ service cloud.firestore {
     	allow read: if isVerified();
       allow write: if false;
       
+      match /table_views/observer {
+      	// observer can read observer view
+        allow read: if isVerified();
+        allow write: if false;
+      }
+      
       match /table_views/{user} {
       	// user can only read his view of the table
         allow read: if isVerified() && request.auth.uid == user;

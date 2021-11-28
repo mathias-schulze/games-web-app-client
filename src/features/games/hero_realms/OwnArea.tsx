@@ -112,6 +112,7 @@ export interface OwnAreaProps {
   id: string;
   table: HeroRealmsTableView;
   area: PlayerArea;
+  observer: boolean;
 }
 
 function OwnArea(props: OwnAreaProps) {
@@ -128,48 +129,48 @@ function OwnArea(props: OwnAreaProps) {
 
   return (
     <Box className={classes.ownArea} style={{backgroundColor: playerColors[area.position]}}>
-      <HealthGoldCombatIndicator id={props.id} area={area}/>
+      <HealthGoldCombatIndicator id={props.id} area={area} observer={props.observer}/>
       {area.active && 
         <PlayedCards id={props.id} area={area} own justifyContent="center"/>
       }
-      {area.actionMode === SpecialActionMode.DISCARD && 
+      {!props.observer && area.actionMode === SpecialActionMode.DISCARD && 
         <DiscardCardDialog {...props}/>
       }
-      {area.actionMode === SpecialActionMode.OPPONENT_DISCARD_CARD && 
+      {!props.observer && area.actionMode === SpecialActionMode.OPPONENT_DISCARD_CARD && 
         <OpponentDiscardCardDialog {...props}/>
       }
-      {area.actionMode === SpecialActionMode.PREPARE_CHAMPION && 
+      {!props.observer && area.actionMode === SpecialActionMode.PREPARE_CHAMPION && 
         <PrepareChampionDialog {...props}/>
       }
-      {area.actionMode === SpecialActionMode.STUN_TARGET_CHAMPION && 
+      {!props.observer && area.actionMode === SpecialActionMode.STUN_TARGET_CHAMPION && 
         <StunTargetChampionDialog {...props}/>
       }
-      {area.actionMode === SpecialActionMode.PUT_CARD_DISCARD_PILE_TOP_DECK && 
+      {!props.observer && area.actionMode === SpecialActionMode.PUT_CARD_DISCARD_PILE_TOP_DECK && 
         <PutCardTopDeckDialog {...props} onlyChampion={false}/>
       }
-      {area.actionMode === SpecialActionMode.PUT_CHAMPION_DISCARD_PILE_TOP_DECK && 
+      {!props.observer && area.actionMode === SpecialActionMode.PUT_CHAMPION_DISCARD_PILE_TOP_DECK && 
         <PutCardTopDeckDialog {...props} onlyChampion/>
       }
-      {area.actionMode === SpecialActionMode.SACRIFICE && 
+      {!props.observer && area.actionMode === SpecialActionMode.SACRIFICE && 
         <SacrificeHandOrDiscardDialog {...props}/>
       }
-      {area.actionMode === SpecialActionMode.CLERIC_BLESS && 
+      {!props.observer && area.actionMode === SpecialActionMode.CLERIC_BLESS && 
         <SelectPlay4BlessOrFireballDialog {...props} bless/>
       }
-      {area.actionMode === SpecialActionMode.PUT_CHAMPION_DISCARD_INTO_PLAY && 
+      {!props.observer && area.actionMode === SpecialActionMode.PUT_CHAMPION_DISCARD_INTO_PLAY && 
         <PutChampionDiscardIntoPlayDialog {...props}/>
       }
-      {area.actionMode === SpecialActionMode.RANGER_TRACK && 
+      {!props.observer && area.actionMode === SpecialActionMode.RANGER_TRACK && 
         <RangerTrackDialog {...props}/>
       }
-      {area.actionMode === SpecialActionMode.ACQUIRE_OPPONENT_DISCARD && 
+      {!props.observer && area.actionMode === SpecialActionMode.ACQUIRE_OPPONENT_DISCARD && 
         <AcquireOpponentDiscardDialog {...props}/>
       }
-      {area.actionMode === SpecialActionMode.WIZARD_FIREBALL && 
+      {!props.observer && area.actionMode === SpecialActionMode.WIZARD_FIREBALL && 
         <SelectPlay4BlessOrFireballDialog {...props} fireball/>
       }
       <Box className={classes.cards}>
-        <PlayedChampions id={props.id} area={area} justifyContent="flex-start" own/>
+        <PlayedChampions id={props.id} area={area} justifyContent="flex-start" observer={props.observer} own/>
         <Box className={classes.hand}>
           {area.hand.map(handCard => {
             return (
@@ -180,7 +181,7 @@ function OwnArea(props: OwnAreaProps) {
         </Box>
         <PlayerDecksAndCards {...props} own/>
       </Box>
-      <EndTurnButton id={props.id} area={area}/>
+      <EndTurnButton {...props} area={area}/>
     </Box>
   )
 }
@@ -657,6 +658,7 @@ export function AcquireOpponentDiscardDialog(props: OwnAreaProps) {
 export interface EndTurnButtonProps {
   id: string;
   area: PlayerArea;
+  observer: boolean;
 }
 
 function EndTurnButton(props: EndTurnButtonProps) {
@@ -668,8 +670,8 @@ function EndTurnButton(props: EndTurnButtonProps) {
   const openActions = ((props.area.combat + props.area.gold) > 0 || props.area.decisions == null || props.area.decisions.length > 0);
 
   useEffect(() => {
-    setEndTurnButtonAvailable(props.area.active);
-  }, [props.area.active])
+    setEndTurnButtonAvailable(!props.observer && props.area.active);
+  }, [props.observer, props.area.active])
 
   const endTurn = async () => {
 

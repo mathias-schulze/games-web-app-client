@@ -1,6 +1,7 @@
 export interface HeroRealmsTableViewProps {
   id: string;
   table: HeroRealmsTableView;
+  observer: boolean;
 }
 
 export interface HeroRealmsTableView {

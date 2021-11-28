@@ -88,6 +88,7 @@ interface HealthGoldCombatIndicatorProps {
   id: string;
   area: PlayerArea;
   availableCombat?: number;
+  observer: boolean;
 }
 
 function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
@@ -140,7 +141,7 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
 
       <Box className={classes.healthGoldCombat}>
       <Avatar className={healthClass} aria-owns={attackPopoverOpen ? 'attack-popover' : undefined} aria-haspopup="true">
-        <Button onClick={handleAttackClick} disabled={!attackAvailable}
+        <Button onClick={handleAttackClick} disabled={props.observer || !attackAvailable}
             classes={{ root: healthClass, disabled: classes.buttonDisabled }}>
           {area.health}
         </Button>

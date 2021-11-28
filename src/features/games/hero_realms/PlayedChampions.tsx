@@ -20,6 +20,7 @@ export interface PlayedChampionsProps {
   availableCombat?: number;
   own?: boolean;
   justifyContent: string;
+  observer: boolean;
 }
 
 function PlayedChampions(props: PlayedChampionsProps) {
@@ -57,7 +58,7 @@ function PlayedChampions(props: PlayedChampionsProps) {
     <Box>
       <Box className={classes.playedChampions} justifyContent={props.justifyContent}>
         {area.champions.map(champion => {
-          const disabled = !(props.attack || (props.own && area.active && champion.ready));
+          const disabled = props.observer || !(props.attack || (props.own && area.active && champion.ready));
           return (
             <Card key={"playedChampion"+champion.id} alt={champion.name} image={champion.image}
                 onClick={() => handleChampionClick(champion.id)} disabled={disabled}

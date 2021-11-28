@@ -6,6 +6,16 @@ export interface GameParameter {
   maxPlayer: number;
 }
 
+export interface Game {
+  id: string;
+  no: number;
+  created: number;
+  game: string;
+  stage: string;
+  players: string[];
+  winner?: string;
+}
+
 export interface GameTable {
   id: string;
   no: number;

@@ -26,6 +26,7 @@ interface OtherAreaProps {
   area: PlayerArea;
   justifyContent: string;
   availableCombat: number;
+  observer: boolean;
 }
 
 function OtherArea(props: OtherAreaProps) {
@@ -35,7 +36,7 @@ function OtherArea(props: OtherAreaProps) {
 
   return (
     <Box className={classes.otherArea} style={{backgroundColor: playerColors[area.position]}}>
-      <HealthGoldCombatIndicator id={props.id} area={area} availableCombat={props.availableCombat}/>
+      <HealthGoldCombatIndicator id={props.id} area={area} availableCombat={props.availableCombat} observer={props.observer}/>
       <Box className={classes.cards}>
         <Deck alt="hand" count={area.handSize} 
             image={props.table.cardBack} emptyImage={props.table.emptyDeck}
@@ -43,7 +44,7 @@ function OtherArea(props: OtherAreaProps) {
         <PlayerDecksAndCards {...props}/>
       </Box>
       <PlayedChampions id={props.id} area={area} justifyContent={props.justifyContent} 
-          attack availableCombat={props.availableCombat}/>
+          attack availableCombat={props.availableCombat} observer={props.observer}/>
     </Box>  
   )
 }

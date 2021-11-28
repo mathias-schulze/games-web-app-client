@@ -39,8 +39,8 @@ function CommonArea(props: HeroRealmsTableViewProps) {
     <Box className={classes.commonArea} style={{backgroundColor: grey[400]}}>
       <Deck key="fireGemsDeck" alt="fire gems deck" count={fireGemsCount} counterLeft
           image={fireGemsImage} emptyImage={table.emptyDeck}
-          onClick={() => {buyFireGem()}} disabled={!table.ownPlayerArea.active}/>
-      <Market id={props.id} table={table}/>
+          onClick={() => {buyFireGem()}} disabled={props.observer || !table.ownPlayerArea.active}/>
+      <Market {...props}/>
       <Deck key="marketDeck" alt="market deck" count={table.marketDeck.size} 
           image={table.cardBack} emptyImage={table.emptyDeck}
           onClick={() => {}} disabled={true}/>
@@ -69,7 +69,7 @@ function Market(props: HeroRealmsTableViewProps) {
         const id = (marketCard === null ? "empty" + index : marketCard.id);
         const name = (marketCard === null ? "empty market " + index : marketCard.name);
         const image = (marketCard === null ? props.table.emptyDeck : marketCard.image);
-        const disabled = (marketCard === null ? true : !props.table.ownPlayerArea.active);
+        const disabled = props.observer || (marketCard === null ? true : !props.table.ownPlayerArea.active);
 
         return (
           <Card key={"marketCard"+id} alt={name} image={image}
