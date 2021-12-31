@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useDocument, useDocumentDataOnce } from 'react-firebase-hooks/firestore';
 import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, IconButton, DialogActions } from '@material-ui/core';
@@ -15,7 +15,8 @@ import { DeleteForever } from '@material-ui/icons';
 import api, { 
   HERO_REALMS_ENDPOINT,
   HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT,
-  HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT
+  HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT,
+  HERO_REALMS_START_OBSERVER_MODE,
 } from '../../common/api/api';
 import { showDiscardPile, hideDiscardPileDialog, getShowDiscardPilePlayerId } from './heroRealmsSlice';
 import { Game } from '../../common/game/GameTypes';
@@ -114,11 +115,20 @@ function HeroRealmsTable(props: HeroRealmsTableProps) {
   );
   const [ table, setTable ] = useState<HeroRealmsTableView>();
 
+  const startObserverMode = useCallback(async () => {
+    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_START_OBSERVER_MODE)
+        .then()
+        .catch(error => {});
+  }, [props.id]);
+
   useEffect(() => {
     if (game) {
       setIsObserver(game.players.filter(player => player === userId).length === 0);
+      if (isObserver) {
+        startObserverMode();
+      }
     }
-  }, [game, userId])
+  }, [game, userId, isObserver, startObserverMode])
 
   useEffect(() => {
     if (userTableView) {
