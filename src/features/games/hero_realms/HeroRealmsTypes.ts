@@ -7,6 +7,7 @@ export interface HeroRealmsTableViewProps {
 export interface HeroRealmsTableView {
   players: Player[];
   activePlayer: Player;
+  round: number;
   cardBack: string;
   emptyDeck: string;
   fireGemsDeck: Deck;
