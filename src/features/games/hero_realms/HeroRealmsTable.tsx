@@ -5,13 +5,13 @@ import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, D
 import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
 import { getAuth } from '../../common/auth/authSlice'
 import { Stage } from '../../common/Const';
-import { HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes'
+import { Character, HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes'
 import OtherArea from './OtherArea';
 import CommonArea from './CommonArea';
 import OwnArea from './OwnArea';
 import PlayedCards from './PlayedCards';
-import { green, yellow, red, blue } from '@material-ui/core/colors';
-import { DeleteForever } from '@material-ui/icons';
+import { green, yellow, red, blue, orange } from '@material-ui/core/colors';
+import { DeleteForever, WarningTwoTone } from '@material-ui/icons';
 import api, { 
   HERO_REALMS_ENDPOINT,
   HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT,
@@ -93,6 +93,18 @@ export const useStyles = makeStyles(theme => ({
   discardPileDialog: {
     display: "flex",
     justifyContent: "center",
+  },
+  roundAbilityBox: {
+    position: 'relative',
+  },
+  roundAbilityWarning: {
+    position: 'absolute',
+    pointerEvents: 'none',
+    top: '27px',
+    left: '23px',
+    color: orange['A400'],
+    width: "60px",
+    height: "60px",
   },
 }));
 
@@ -283,7 +295,9 @@ export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
   const area = props.area;
   const discardPileImage = ((area.discardPile.size === 0) ? table.emptyDeck : (area.discardPile.cards[area.discardPile.size-1].image));
   const showDiscardPilePlayerId = useSelector(getShowDiscardPilePlayerId);
-  const roundAbilityReady = area.characterRoundAbilityActive != null && area.characterRoundAbilityActive;
+  const isRanger = area.character === Character.RANGER;
+  const hasRangerEmptyDeck = isRanger && area.deck.size === 0;
+  const roundAbilityReady = area.characterRoundAbilityActive != null && area.characterRoundAbilityActive && !hasRangerEmptyDeck;
   const roundAbilityDisabled = props.observer || !area.active || !props.own || !roundAbilityReady;
   const oneTimeAbilityDisabled = props.observer || !area.active || !props.own;
 
@@ -309,8 +323,12 @@ export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
           image={discardPileImage} emptyImage={table.emptyDeck}
           onClick={() => {dispatch(showDiscardPile(area.playerId))}} disabled={false}/>
       {area.characterRoundAbilityImage &&
-        <Card key={"roundAbility"} alt="round ability" image={area.characterRoundAbilityImage}
-                  onClick={() => {processCharacterRoundAbilities()}} disabled={roundAbilityDisabled} ready={roundAbilityReady}/>
+        <Box className={classes.roundAbilityBox}>
+          <Card key={"roundAbility"} alt="round ability" image={area.characterRoundAbilityImage}
+                    onClick={() => {processCharacterRoundAbilities()}} disabled={roundAbilityDisabled} ready={roundAbilityReady}/>
+          {area.active && props.own && isRanger && roundAbilityReady && area.deck.size < 3 && 
+              <WarningTwoTone className={classes.roundAbilityWarning}/>}
+        </Box>
       }
       {area.characterOneTimeAbilityImage &&
         <Card key={"oneTimeAbility"} alt="one time ability" image={area.characterOneTimeAbilityImage}

@@ -52,6 +52,7 @@ export enum CardType {
 export interface PlayerArea {
   playerId: string;
   playerName: string;
+  character: Character;
   characterRoundAbilityActive?: boolean;
   characterRoundAbilityImage?: string;
   characterOneTimeAbilityImage?: string;
@@ -77,6 +78,14 @@ export interface PlayerArea {
   factionCountWild: number;
   rangerTrackCards: Card[];
   rangerTrackDiscardCount: number;
+}
+
+export enum Character {
+  CLERIC = 'CLERIC',
+  FIGHTER = 'FIGHTER',
+  RANGER = 'RANGER',
+  THIEF = 'THIEF',
+  WIZARD = 'WIZARD',
 }
 
 export enum SpecialActionMode {
