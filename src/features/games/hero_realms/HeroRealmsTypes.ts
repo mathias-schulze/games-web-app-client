@@ -56,6 +56,7 @@ export interface PlayerArea {
   characterRoundAbilityImage?: string;
   characterOneTimeAbilityImage?: string;
   active: boolean;
+  blessed: boolean;
   actionMode: SpecialActionMode;
   selected4Discard: boolean;
   killed: boolean;

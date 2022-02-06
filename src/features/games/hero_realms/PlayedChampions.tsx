@@ -3,6 +3,8 @@ import { Box, makeStyles } from '@material-ui/core';
 import { PlayerArea } from './HeroRealmsTypes'
 import { Card } from './HeroRealmsTable';
 import api, { HERO_REALMS_ATTACK_ENDPOINT, HERO_REALMS_ENDPOINT, HERO_REALMS_PLAY_CHAMPION_ENDPOINT } from '../../common/api/api';
+import { Security } from '@material-ui/icons';
+import { grey } from '@material-ui/core/colors';
 
 export const useStyles = makeStyles({
   playedChampions: {
@@ -11,6 +13,18 @@ export const useStyles = makeStyles({
     width: "100%",
     height: "135px",
   },
+  championBox: {
+    position: 'relative',
+  },
+  blessedIndicator: {
+    position: 'absolute',
+    pointerEvents: 'none',
+    top: '47px',
+    left: '23px',
+    color: grey[800],
+    width: "60px",
+    height: "60px",
+  }
 });
 
 export interface PlayedChampionsProps {
@@ -60,9 +74,12 @@ function PlayedChampions(props: PlayedChampionsProps) {
         {area.champions.map(champion => {
           const disabled = props.observer || !(props.attack || (props.own && area.active && champion.ready));
           return (
-            <Card key={"playedChampion"+champion.id} alt={champion.name} image={champion.image}
-                onClick={() => handleChampionClick(champion.id)} disabled={disabled}
-                ready={champion.ready}/>
+            <Box className={classes.championBox}>
+              <Card key={"playedChampion"+champion.id} alt={champion.name} image={champion.image}
+                  onClick={() => handleChampionClick(champion.id)} disabled={disabled}
+                  ready={champion.ready}/>
+              {area.blessed && <Security className={classes.blessedIndicator}/>}
+            </Box>
           )})
         }
       </Box>
