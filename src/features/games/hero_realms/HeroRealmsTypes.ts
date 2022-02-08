@@ -16,6 +16,7 @@ export interface HeroRealmsTableView {
   sacrificePile: Deck;
   ownPlayerArea: PlayerArea;
   otherPlayerAreas: PlayerArea[];
+  currentTurnStart: number;
 }
 
 export interface Player {

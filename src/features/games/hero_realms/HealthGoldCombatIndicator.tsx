@@ -1,9 +1,10 @@
-import React, { Fragment, useState } from 'react'
-import { Avatar, Box, Button, IconButton, makeStyles, Popover, Typography } from '@material-ui/core';
-import { PlayerArea } from './HeroRealmsTypes';
-import { FirstPage, LastPage, NavigateBefore, NavigateNext, Security } from '@material-ui/icons';
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
+import { Avatar, Box, Button, Chip, IconButton, makeStyles, Popover, Typography } from '@material-ui/core';
+import { HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes';
+import { Alarm, FirstPage, LastPage, NavigateBefore, NavigateNext, Security } from '@material-ui/icons';
 import api, { HERO_REALMS_ATTACK_ENDPOINT, HERO_REALMS_ENDPOINT } from '../../common/api/api';
 import { green, yellow, red, grey } from '@material-ui/core/colors';
+import moment from 'moment';
 
 export const useStyles = makeStyles(theme => ({
   indicator: {
@@ -38,6 +39,17 @@ export const useStyles = makeStyles(theme => ({
     alignItems: "center",
     flexBasis: "33%",
     margin: theme.spacing(1),
+  },
+  timer: {
+    margin: theme.spacing(1),
+    height: "40px",
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    backgroundColor: grey[500],
+  },
+  timerIcon: {
+    color: 'black',
   },
   health: {
     margin: theme.spacing(1),
@@ -86,6 +98,7 @@ export const useStyles = makeStyles(theme => ({
 
 interface HealthGoldCombatIndicatorProps {
   id: string;
+  table: HeroRealmsTableView;
   area: PlayerArea;
   availableCombat?: number;
   observer: boolean;
@@ -96,13 +109,31 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
   const classes = useStyles();
 
   const area = props.area;
+  const [time, setTime] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const attackAvailable = (props.availableCombat && props.availableCombat > 0);
   const attackPopoverOpen = Boolean(anchorEl && attackAvailable);
   const [attack, setAttack] = useState(0);
   const hasGuard = (area.champions.filter(champion => {return (champion.type === "GUARD")}).length > 0);
   const healthClass = area.killed ? classes.killed : classes.health;
+  
+  const updateTimer = useCallback(async () => {
+    setTime("");
+    const start = props.table.currentTurnStart;
+    if (area.active && start > 0) {
+      const currentTime = moment();
+      const duration = moment.duration(currentTime.diff(moment(props.table.currentTurnStart)));
+      if (duration.asHours() < 1) {
+        setTime(moment.utc(duration.asMilliseconds()).format("mm:ss"));
+      }
+    }
+  }, [area.active, props.table.currentTurnStart])
 
+  useEffect(() => {
+    const startUpdateTimer = setInterval(() => updateTimer(), 1000);
+    return () => clearInterval(startUpdateTimer);
+  }, [area.active, updateTimer]);
+  
   function handleAttackClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
   }
@@ -140,6 +171,7 @@ function HealthGoldCombatIndicator(props: HealthGoldCombatIndicatorProps) {
       </Box>
 
       <Box className={classes.healthGoldCombat}>
+        {time.length > 0 && <Chip icon={<Alarm className={classes.timerIcon}/>} label={time} className={classes.timer}/>}
       <Avatar className={healthClass} aria-owns={attackPopoverOpen ? 'attack-popover' : undefined} aria-haspopup="true">
         <Button onClick={handleAttackClick} disabled={props.observer || !attackAvailable}
             classes={{ root: healthClass, disabled: classes.buttonDisabled }}>

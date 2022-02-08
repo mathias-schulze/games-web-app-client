@@ -129,7 +129,7 @@ function OwnArea(props: OwnAreaProps) {
 
   return (
     <Box className={classes.ownArea} style={{backgroundColor: playerColors[area.position]}}>
-      <HealthGoldCombatIndicator id={props.id} area={area} observer={props.observer}/>
+      <HealthGoldCombatIndicator {...props} observer={props.observer}/>
       {area.active && 
         <PlayedCards id={props.id} area={area} own justifyContent="center"/>
       }
