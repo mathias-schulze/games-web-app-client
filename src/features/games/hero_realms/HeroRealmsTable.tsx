@@ -1,57 +1,83 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react'
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import {
+	useDocument,
+	useDocumentDataOnce,
+} from 'react-firebase-hooks/firestore';
 import { useDispatch, useSelector } from 'react-redux';
-import { useDocument, useDocumentDataOnce } from 'react-firebase-hooks/firestore';
-import { Button, Avatar, Popover, Paper, Box, makeStyles, Dialog, DialogTitle, DialogContent, Typography, IconButton, DialogActions } from '@material-ui/core';
-import { firestore, COLLECTION_GAMES, COLLECTION_TABLE } from '../../common/firebase/Firebase'
-import { getAuth } from '../../common/auth/authSlice'
+
+import {
+	Avatar,
+	Box,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	IconButton,
+	makeStyles,
+	Paper,
+	Popover,
+	Typography,
+} from '@material-ui/core';
+import { blue, green, orange, red, yellow } from '@material-ui/core/colors';
+import { DeleteForever, WarningTwoTone } from '@material-ui/icons';
+
+import api, {
+	HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT,
+	HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT,
+	HERO_REALMS_ENDPOINT,
+	HERO_REALMS_START_OBSERVER_MODE,
+} from '../../common/api/api';
+import { getAuth } from '../../common/auth/authSlice';
 import { Stage } from '../../common/Const';
-import { Character, HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes'
-import OtherArea from './OtherArea';
+import {
+	COLLECTION_GAMES,
+	COLLECTION_TABLE,
+	firestore,
+} from '../../common/firebase/Firebase';
+import { Game } from '../../common/game/GameTypes';
 import CommonArea from './CommonArea';
+import {
+	getShowDiscardPilePlayerId,
+	hideDiscardPileDialog,
+	showDiscardPile,
+} from './heroRealmsSlice';
+import { Character, HeroRealmsTableView, PlayerArea } from './HeroRealmsTypes';
+import OtherArea from './OtherArea';
 import OwnArea from './OwnArea';
 import PlayedCards from './PlayedCards';
-import { green, yellow, red, blue, orange } from '@material-ui/core/colors';
-import { DeleteForever, WarningTwoTone } from '@material-ui/icons';
-import api, { 
-  HERO_REALMS_ENDPOINT,
-  HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT,
-  HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT,
-  HERO_REALMS_START_OBSERVER_MODE,
-} from '../../common/api/api';
-import { showDiscardPile, hideDiscardPileDialog, getShowDiscardPilePlayerId } from './heroRealmsSlice';
-import { Game } from '../../common/game/GameTypes';
 
 export const playerColors = [blue[100], green[100], red[100], yellow[100]];
 
-export const useStyles = makeStyles(theme => ({
+export const useStyles = makeStyles((theme) => ({
   table: {
-    display: "flex",
+    display: 'flex',
     flexGrow: 1,
-    flexFlow: "column wrap",
-    width: "100%",
+    flexFlow: 'column wrap',
+    width: '100%',
   },
   otherAreas: {
-    display: "flex",
+    display: 'flex',
     flexGrow: 1,
-    justifyContent: "space-between",
-    width: "100%",
+    justifyContent: 'space-between',
+    width: '100%',
   },
   image: {
-    width: "90px",
+    width: '90px',
   },
   imageLarge: {
-    width: "250px",
+    width: '250px',
   },
   sacrificeIcon: {
-    fontSize: "1.2em",
-    color: "black",
+    fontSize: '1.2em',
+    color: 'black',
   },
   sacrificeIconContainer: {
-    backgroundColor: "grey",
-    position: "absolute",
-    top: "40%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
+    backgroundColor: 'grey',
+    position: 'absolute',
+    top: '40%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
   },
   notReady: {
     opacity: 0.6,
@@ -59,9 +85,9 @@ export const useStyles = makeStyles(theme => ({
   deckCount: {
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.dark,
-    position: "absolute",
-    right: "18px",
-    top: "18px",
+    position: 'absolute',
+    right: '18px',
+    top: '18px',
     width: theme.spacing(3),
     height: theme.spacing(3),
     fontSize: 11,
@@ -69,9 +95,9 @@ export const useStyles = makeStyles(theme => ({
   deckCountLeft: {
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.dark,
-    position: "absolute",
-    left: "18px",
-    top: "18px",
+    position: 'absolute',
+    left: '18px',
+    top: '18px',
     width: theme.spacing(3),
     height: theme.spacing(3),
     fontSize: 11,
@@ -80,19 +106,19 @@ export const useStyles = makeStyles(theme => ({
     pointerEvents: 'none',
   },
   finishedContainer: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
   },
   backdrop: {
     position: 'absolute',
   },
   playDecksAndCardsBox: {
-    display: "flex",
+    display: 'flex',
   },
   discardPileDialog: {
-    display: "flex",
-    justifyContent: "center",
+    display: 'flex',
+    justifyContent: 'center',
   },
   roundAbilityBox: {
     position: 'relative',
@@ -103,81 +129,117 @@ export const useStyles = makeStyles(theme => ({
     top: '27px',
     left: '23px',
     color: orange['A400'],
-    width: "60px",
-    height: "60px",
+    width: '60px',
+    height: '60px',
   },
 }));
 
 export interface HeroRealmsTableProps {
-    id: string;
-    stage: Stage;
-    winner: string | undefined;
+  id: string;
+  stage: Stage;
+  winner: string | undefined;
 }
 
 function HeroRealmsTable(props: HeroRealmsTableProps) {
-
   const classes = useStyles();
   const userId = useSelector(getAuth)?.uid;
   const [game] = useDocumentDataOnce<Game>(
-    firestore.collection(COLLECTION_GAMES).doc(props.id)
+    firestore.collection(COLLECTION_GAMES).doc(props.id),
   );
   const [isObserver, setIsObserver] = useState(true);
   const [userTableView] = useDocument(
-    firestore.collection(COLLECTION_GAMES).doc(props.id).collection(COLLECTION_TABLE).doc(!userId || isObserver ? "observer" : userId)
+    firestore
+      .collection(COLLECTION_GAMES)
+      .doc(props.id)
+      .collection(COLLECTION_TABLE)
+      .doc(!userId || isObserver ? 'observer' : userId),
   );
-  const [ table, setTable ] = useState<HeroRealmsTableView>();
+  const [table, setTable] = useState<HeroRealmsTableView>();
 
   const startObserverMode = useCallback(async () => {
-    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_START_OBSERVER_MODE)
-        .then()
-        .catch(error => {});
+    await api
+      .post(
+        HERO_REALMS_ENDPOINT + '/' + props.id + HERO_REALMS_START_OBSERVER_MODE,
+      )
+      .then()
+      .catch((error) => {});
   }, [props.id]);
 
   useEffect(() => {
     if (game) {
-      setIsObserver(game.players.filter(player => player === userId).length === 0);
+      setIsObserver(
+        game.players.filter((player) => player === userId).length === 0,
+      );
       if (isObserver) {
         startObserverMode();
       }
     }
-  }, [game, userId, isObserver, startObserverMode])
+  }, [game, userId, isObserver, startObserverMode]);
 
   useEffect(() => {
     if (userTableView) {
       setTable(userTableView.data());
     }
-  }, [userTableView])
+  }, [userTableView]);
 
   const getJustifyContent = (table: HeroRealmsTableView, area: PlayerArea) => {
-    
     const index = table.otherPlayerAreas.indexOf(area);
     const size = table.otherPlayerAreas.length;
-    return (index === 0 ? "flex-start" : (index === size-1 ? "flex-end" : "center"));
-  }
+    return index === 0
+      ? 'flex-start'
+      : index === size - 1
+      ? 'flex-end'
+      : 'center';
+  };
 
   return (
     <div>
-      {table &&
+      {table && (
         <Box className={classes.table}>
           <Box className={classes.otherAreas}>
-            {table.otherPlayerAreas.map(area => {
-              return <OtherArea id={props.id} table={table} area={area} observer={isObserver} key={"area"+area.playerId}
-                  justifyContent={getJustifyContent(table, area)} availableCombat={table.ownPlayerArea.combat}/> })
-            }
+            {table.otherPlayerAreas.map((area) => {
+              return (
+                <OtherArea
+                  id={props.id}
+                  table={table}
+                  area={area}
+                  observer={isObserver}
+                  key={'area' + area.playerId}
+                  justifyContent={getJustifyContent(table, area)}
+                  availableCombat={table.ownPlayerArea.combat}
+                />
+              );
+            })}
           </Box>
-          {table.otherPlayerAreas.filter(area => area.active)
-              .map(area => {
-                return <PlayedCards key={"playedCards"+area.playerId}
-                    id={props.id} area={area} justifyContent={getJustifyContent(table, area)}/> })
-              }
-          <CommonArea id={props.id} table={table} observer={isObserver}/>
-          <OwnArea id={props.id} area={table.ownPlayerArea} table={table} observer={isObserver}/>
-          
-          {props.stage === Stage.FINISHED && <GameFinishedDialog game={props} table={table}/>}
+          {table.otherPlayerAreas
+            .filter((area) => area.active)
+            .map((area) => {
+              return (
+                <PlayedCards
+                  key={'playedCards' + area.playerId}
+                  id={props.id}
+                  area={area}
+                  own={false}
+                  observer={isObserver}
+                  justifyContent={getJustifyContent(table, area)}
+                />
+              );
+            })}
+          <CommonArea id={props.id} table={table} observer={isObserver} />
+          <OwnArea
+            id={props.id}
+            area={table.ownPlayerArea}
+            table={table}
+            observer={isObserver}
+          />
+
+          {props.stage === Stage.FINISHED && (
+            <GameFinishedDialog game={props} table={table} />
+          )}
         </Box>
-      }
+      )}
     </div>
-  )
+  );
 }
 
 export interface GameFinishedDialogProps {
@@ -186,20 +248,27 @@ export interface GameFinishedDialogProps {
 }
 
 function GameFinishedDialog(props: GameFinishedDialogProps) {
-
   const classes = useStyles();
 
-  let winner = props.game.winner && props.table.players.filter(player => player.id === props.game.winner)[0].name;
+  let winner =
+    props.game.winner &&
+    props.table.players.filter((player) => player.id === props.game.winner)[0]
+      .name;
 
   return (
     <Box className={classes.finishedContainer}>
-      <Dialog open={true} disablePortal
-          style={{ position: "absolute" }}
-          BackdropProps={{ classes: { root: classes.backdrop } }}>
+      <Dialog
+        open={true}
+        disablePortal
+        style={{position: 'absolute'}}
+        BackdropProps={{classes: {root: classes.backdrop}}}
+      >
         <DialogTitle>Spiel beendet</DialogTitle>
         <DialogContent>
-          <Typography variant="subtitle1">Sieger:</Typography>
-          <Typography variant="h6" align="center">{winner}</Typography>
+          <Typography variant='subtitle1'>Sieger:</Typography>
+          <Typography variant='h6' align='center'>
+            {winner}
+          </Typography>
         </DialogContent>
       </Dialog>
     </Box>
@@ -217,15 +286,24 @@ export interface DeckProps {
 }
 
 export function Deck(props: DeckProps) {
-
   const classes = useStyles();
 
   return (
     <Button onClick={props.onClick} disabled={props.disabled}>
-      <Avatar className={props.counterLeft ? classes.deckCountLeft : classes.deckCount}>{props.count}</Avatar>
-      <img src={"..//"+((props.count > 0) ? props.image : props.emptyImage)} alt={props.alt} className={classes.image}/>
+      <Avatar
+        className={
+          props.counterLeft ? classes.deckCountLeft : classes.deckCount
+        }
+      >
+        {props.count}
+      </Avatar>
+      <img
+        src={'..//' + (props.count > 0 ? props.image : props.emptyImage)}
+        alt={props.alt}
+        className={classes.image}
+      />
     </Button>
-  )
+  );
 }
 
 export interface CardProps {
@@ -238,13 +316,14 @@ export interface CardProps {
 }
 
 export function Card(props: CardProps) {
-
   const classes = useStyles();
-  
-  const imageClassName = props.ready ? "" : classes.notReady;
+
+  const imageClassName = props.ready ? '' : classes.notReady;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const handlePopoverOpen = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+  ) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -256,26 +335,45 @@ export function Card(props: CardProps) {
 
   return (
     <Fragment>
-      <Paper square aria-owns={popoverOpen ? 'mouse-over-popover' : undefined} aria-haspopup="true"
-          onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}
-          className={imageClassName} style={{backgroundColor: "inherit"}}>
+      <Paper
+        square
+        aria-owns={popoverOpen ? 'mouse-over-popover' : undefined}
+        aria-haspopup='true'
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        className={imageClassName}
+        style={{backgroundColor: 'inherit'}}
+      >
         <Button onClick={props.onClick} disabled={props.disabled}>
-          {props.sacrifice &&
+          {props.sacrifice && (
             <IconButton className={classes.sacrificeIconContainer}>
-              <DeleteForever className={classes.sacrificeIcon}/>
+              <DeleteForever className={classes.sacrificeIcon} />
             </IconButton>
-          }
-          <img src={"..//"+props.image} alt={props.alt} className={classes.image}/>
+          )}
+          <img
+            src={'..//' + props.image}
+            alt={props.alt}
+            className={classes.image}
+          />
         </Button>
       </Paper>
-      <Popover id="mouse-over-popover" className={classes.popover}
-          open={popoverOpen} anchorEl={anchorEl} disableRestoreFocus
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'center' }}>
-        <img src={"..//"+props.image} alt={props.alt} className={classes.imageLarge}/>
+      <Popover
+        id='mouse-over-popover'
+        className={classes.popover}
+        open={popoverOpen}
+        anchorEl={anchorEl}
+        disableRestoreFocus
+        anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+        transformOrigin={{vertical: 'top', horizontal: 'center'}}
+      >
+        <img
+          src={'..//' + props.image}
+          alt={props.alt}
+          className={classes.imageLarge}
+        />
       </Popover>
     </Fragment>
-  )
+  );
 }
 
 export interface PlayerDecksAndCardsProps {
@@ -287,90 +385,150 @@ export interface PlayerDecksAndCardsProps {
 }
 
 export function PlayerDecksAndCards(props: PlayerDecksAndCardsProps) {
-
   const classes = useStyles();
   const dispatch = useDispatch();
-  
+
   const table = props.table;
   const area = props.area;
-  const discardPileImage = ((area.discardPile.size === 0) ? table.emptyDeck : (area.discardPile.cards[area.discardPile.size-1].image));
+  const discardPileImage =
+    area.discardPile.size === 0
+      ? table.emptyDeck
+      : area.discardPile.cards[area.discardPile.size - 1].image;
   const showDiscardPilePlayerId = useSelector(getShowDiscardPilePlayerId);
   const isRanger = area.character === Character.RANGER;
   const hasRangerEmptyDeck = isRanger && area.deck.size === 0;
-  const roundAbilityReady = area.characterRoundAbilityActive != null && area.characterRoundAbilityActive && !hasRangerEmptyDeck;
-  const roundAbilityDisabled = props.observer || !area.active || !props.own || !roundAbilityReady;
+  const roundAbilityReady =
+    area.characterRoundAbilityActive != null &&
+    area.characterRoundAbilityActive &&
+    !hasRangerEmptyDeck;
+  const roundAbilityDisabled =
+    props.observer || !area.active || !props.own || !roundAbilityReady;
   const oneTimeAbilityDisabled = props.observer || !area.active || !props.own;
 
   const processCharacterRoundAbilities = async () => {
-    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT)
-        .then()
-        .catch(error => {});
-  }
+    await api
+      .post(
+        HERO_REALMS_ENDPOINT +
+          '/' +
+          props.id +
+          HERO_REALMS_CHARACTER_ROUND_ABILITIES_ENDPOINT,
+      )
+      .then()
+      .catch((error) => {});
+  };
 
   const processCharacterOneTimeAbilities = async () => {
-    await api.post(HERO_REALMS_ENDPOINT + "/" + props.id + HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT)
-        .then()
-        .catch(error => {});
-  }
+    await api
+      .post(
+        HERO_REALMS_ENDPOINT +
+          '/' +
+          props.id +
+          HERO_REALMS_CHARACTER_ONE_TIME_ABILITIES_ENDPOINT,
+      )
+      .then()
+      .catch((error) => {});
+  };
 
   return (
     <Box className={classes.playDecksAndCardsBox}>
-      <Deck alt="deck" count={area.deck.size} 
-          image={table.cardBack} emptyImage={table.emptyDeck}
-          onClick={() => {}} disabled={true}/>
+      <Deck
+        alt='deck'
+        count={area.deck.size}
+        image={table.cardBack}
+        emptyImage={table.emptyDeck}
+        onClick={() => {}}
+        disabled={true}
+      />
 
-      <Deck alt="discard pile" count={area.discardPile.size} 
-          image={discardPileImage} emptyImage={table.emptyDeck}
-          onClick={() => {dispatch(showDiscardPile(area.playerId))}} disabled={false}/>
-      {area.characterRoundAbilityImage &&
+      <Deck
+        alt='discard pile'
+        count={area.discardPile.size}
+        image={discardPileImage}
+        emptyImage={table.emptyDeck}
+        onClick={() => {
+          dispatch(showDiscardPile(area.playerId));
+        }}
+        disabled={false}
+      />
+      {area.characterRoundAbilityImage && (
         <Box className={classes.roundAbilityBox}>
-          <Card key={"roundAbility"} alt="round ability" image={area.characterRoundAbilityImage}
-                    onClick={() => {processCharacterRoundAbilities()}} disabled={roundAbilityDisabled} ready={roundAbilityReady}/>
-          {area.active && props.own && isRanger && roundAbilityReady && area.deck.size < 3 && 
-              <WarningTwoTone className={classes.roundAbilityWarning}/>}
+          <Card
+            key={'roundAbility'}
+            alt='round ability'
+            image={area.characterRoundAbilityImage}
+            onClick={() => {
+              processCharacterRoundAbilities();
+            }}
+            disabled={roundAbilityDisabled}
+            ready={roundAbilityReady}
+          />
+          {area.active &&
+            props.own &&
+            isRanger &&
+            roundAbilityReady &&
+            area.deck.size < 3 && (
+              <WarningTwoTone className={classes.roundAbilityWarning} />
+            )}
         </Box>
-      }
-      {area.characterOneTimeAbilityImage &&
-        <Card key={"oneTimeAbility"} alt="one time ability" image={area.characterOneTimeAbilityImage}
-                  onClick={() => {processCharacterOneTimeAbilities()}} disabled={oneTimeAbilityDisabled} ready/>
-      }
+      )}
+      {area.characterOneTimeAbilityImage && (
+        <Card
+          key={'oneTimeAbility'}
+          alt='one time ability'
+          image={area.characterOneTimeAbilityImage}
+          onClick={() => {
+            processCharacterOneTimeAbilities();
+          }}
+          disabled={oneTimeAbilityDisabled}
+          ready
+        />
+      )}
 
-      {showDiscardPilePlayerId === area.playerId &&
-        <ShowDiscardPileDialog {...props}/>
-      }
+      {showDiscardPilePlayerId === area.playerId && (
+        <ShowDiscardPileDialog {...props} />
+      )}
     </Box>
-  )
+  );
 }
 
 function ShowDiscardPileDialog(props: PlayerDecksAndCardsProps) {
-  
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const area = props.area;
-  
+
   return (
-    <Dialog open={true} maxWidth="lg" onClose={() => {}}>
-      <DialogTitle>
-        {area.playerName}
-      </DialogTitle>
+    <Dialog open={true} maxWidth='lg' onClose={() => {}}>
+      <DialogTitle>{area.playerName}</DialogTitle>
       <DialogContent>
         <Box className={classes.discardPileDialog}>
-          {props.area.discardPile.cards.map(card => {
-              return (
-                <Card key={"discardCard"+card.id} alt={card.name} image={card.image}
-                    onClick={() => {}} disabled ready/>
-              )})
-          }
+          {props.area.discardPile.cards.map((card) => {
+            return (
+              <Card
+                key={'discardCard' + card.id}
+                alt={card.name}
+                image={card.image}
+                onClick={() => {}}
+                disabled
+                ready
+              />
+            );
+          })}
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="text" color="primary" onClick={() => {dispatch(hideDiscardPileDialog())}}>
+        <Button
+          variant='text'
+          color='primary'
+          onClick={() => {
+            dispatch(hideDiscardPileDialog());
+          }}
+        >
           Schließen
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }
 
-export default HeroRealmsTable
+export default HeroRealmsTable;
